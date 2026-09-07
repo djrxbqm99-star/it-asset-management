@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 - IT 자산관리 시스템</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            font-size: 16px;
+            background: #f5f5f3;
+            margin: 0;
+        }
+        .box {
+            max-width: 360px;
+            margin: 100px auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+        input {
+            width: 100%;
+            height: 44px;
+            font-size: 16px;
+            padding: 0 12px;
+            margin-bottom: 14px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            height: 48px;
+            font-size: 18px;
+            font-weight: 500;
+            background: #2f6fed;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .msg {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .msg.error { color: #c0392b; }
+        .msg.success { color: #1e824c; }
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .links a {
+            color: #2f6fed;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>IT 자산관리 시스템 로그인</h1>
+
+    <p class="msg error" th:if="${param.error}">아이디 또는 비밀번호가 올바르지 않습니다.</p>
+    <p class="msg success" th:if="${param.signup}">회원가입이 완료되었습니다. 로그인해 주세요.</p>
+    <p class="msg success" th:if="${param.logout}">로그아웃되었습니다.</p>
+
+    <!-- Spring Security formLogin 기본 파라미터: username, password -->
+    <form th:action="@{/login}" method="post">
+        <input type="text" name="username" placeholder="아이디" required autofocus/>
+        <input type="password" name="password" placeholder="비밀번호" required/>
+        <button type="submit">로그인</button>
+    </form>
+
+    <div class="links">
+        <a th:href="@{/signup}">회원가입</a>
+    </div>
+</div>
+
+</body>
+</html>

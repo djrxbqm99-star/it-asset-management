@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT 자산관리 시스템</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="logo"><span class="dot"></span>IT 자산관리 시스템</div>
+    <nav>
+        <a th:href="@{/}">홈</a>
+        <a href="#" id="guideOpenBtn">사용 방법 알아보기</a>
+        <a th:href="@{/login}" class="primary">로그인</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-badge fade-up">사내 IT 자산 통합 관리</div>
+    <h1 class="fade-up-delay-1">
+        PC부터 서버까지,<br>
+        <span class="highlight">담당자 인수인계 이력</span>까지 한 번에
+    </h1>
+    <p class="hero-desc fade-up-delay-2">
+        누가, 언제, 어떤 자산을 관리했는지 감사 이력(Audit Trail)으로 남기는<br>
+        직관적인 IT 자산관리 시스템입니다.
+    </p>
+    <div class="hero-actions fade-up-delay-3">
+        <a th:href="@{/login}" class="btn btn-primary">로그인하고 시작하기</a>
+        <a th:href="@{/signup}" class="btn btn-outline">회원가입</a>
+    </div>
+
+    <div class="hero-cards fade-up-delay-3">
+        <div class="hero-card">
+            <div class="hero-card-icon icon-blue">🖥️</div>
+            <div class="hero-card-title">자산 통합 관리</div>
+            <div class="hero-card-desc">PC · 모니터 · 서버 · 네트워크 장비를 한 화면에서</div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-icon icon-green">🔄</div>
+            <div class="hero-card-title">인수인계 타임라인</div>
+            <div class="hero-card-desc">담당자 변경 이력을 시간순으로 자동 기록</div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-icon icon-orange">🛠️</div>
+            <div class="hero-card-title">상태 · 유지보수 이력</div>
+            <div class="hero-card-desc">정상 / 수리중 / 폐기 상태와 조치 내역 관리</div>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-title">IT 자산관리 시스템 · Portfolio Project</div>
+    <div class="footer-contact">
+        <span>👤 담당자 : 김민찬</span>
+        <span>✉️ 메일주소 : kmc34633@naver.com</span>
+        <span>🕘 운영시간 : 09:00 ~ 18:00</span>
+        <span>📞 전화번호 : 010-3463-5279</span>
+    </div>
+    <div class="footer-copy">&copy; 2026 Minchan Kim. All rights reserved.</div>
+</footer>
+
+<!-- 사용 방법 안내 모달 -->
+<div class="modal-overlay" id="guideModal">
+    <div class="modal-box guide-modal-box">
+        <button class="modal-close-btn" id="guideCloseBtn">✕</button>
+
+        <div class="guide-modal-header">
+            <div class="guide-modal-icon">📘</div>
+            <h2>이렇게 사용하세요</h2>
+            <p>3단계면 충분합니다</p>
+        </div>
+
+        <div class="guide-steps">
+            <div class="guide-step">
+                <div class="guide-step-num">1</div>
+                <div>
+                    <div class="guide-step-title">회원가입 &amp; 로그인</div>
+                    <div class="guide-step-desc">사번(아이디)과 비밀번호로 계정을 만들고 로그인하세요.</div>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="guide-step-num">2</div>
+                <div>
+                    <div class="guide-step-title">자산 목록 확인</div>
+                    <div class="guide-step-desc">왼쪽 부서/상태 필터로 원하는 자산을 빠르게 찾아보세요.</div>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="guide-step-num">3</div>
+                <div>
+                    <div class="guide-step-title">상세 정보 &amp; 인수인계 이력</div>
+                    <div class="guide-step-desc">자산명을 클릭하면 담당자 변경 이력을 타임라인으로 볼 수 있어요.</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary guide-close-cta" id="guideCloseCta">확인했어요</button>
+    </div>
+</div>
+
+<script th:src="@{/js/home.js}"></script>
+</body>
+</html>

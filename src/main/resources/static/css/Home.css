@@ -1,0 +1,175 @@
+/* ============================================
+   home.css - 홈(랜딩) 페이지 전용
+   경로: src/main/resources/static/css/home.css
+   ============================================ */
+
+.hero {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 90px 24px 60px;
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 18px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+    margin-bottom: 22px;
+}
+
+.hero h1 {
+    font-size: 38px;
+    line-height: 1.4;
+    font-weight: 700;
+    margin: 0 0 20px;
+    letter-spacing: -0.5px;
+}
+
+.hero h1 .highlight {
+    background: linear-gradient(135deg, var(--color-primary), #7C3AED);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-desc {
+    font-size: 17px;
+    color: var(--color-text-muted);
+    margin-bottom: 36px;
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 64px;
+}
+
+.hero-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.hero-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 28px 22px;
+    text-align: left;
+    transition: var(--transition);
+}
+
+.hero-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+}
+
+.hero-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+}
+
+.icon-blue { background: #EAF0FF; }
+.icon-green { background: #E9FBF0; }
+.icon-orange { background: #FFF4E5; }
+
+.hero-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.hero-card-desc {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+/* ---------- 사용 방법 모달 ---------- */
+.guide-modal-box {
+    width: 460px;
+    padding: 40px 36px 32px;
+    position: relative;
+}
+
+.guide-modal-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.guide-modal-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.guide-modal-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.guide-modal-header p {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 28px;
+}
+
+.guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.guide-step-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), #5B7FF0);
+    color: #fff;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.guide-step-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.guide-step-desc {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.guide-close-cta {
+    width: 100%;
+}
+
+@media (max-width: 720px) {
+    .hero-cards { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+}
