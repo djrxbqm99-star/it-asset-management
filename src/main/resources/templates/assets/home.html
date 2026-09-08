@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자산 목록 - IT 자산관리 시스템</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard/assets-home.css}">
+</head>
+<body>
+
+<header class="site-header">
+    <a th:href="@{/}" class="logo"><span class="dot"></span>IT 자산관리 시스템</a>
+    <nav>
+        <a th:href="@{/assets}" class="primary">자산 목록</a>
+        <span class="welcome-text">
+            🏢 <span class="welcome-dept" th:text="${loginDepartment} ?: '소속 미지정'"></span>
+            · <span class="welcome-name" th:text="${loginName}"></span>님
+        </span>
+        <button type="button" class="logout-btn" id="logoutOpenBtn">로그아웃</button>
+    </nav>
+</header>
+
+<div class="placeholder-wrap">
+    <div class="placeholder-box fade-up">
+        <div class="placeholder-icon">🚧</div>
+        <h1>자산 목록 화면 준비 중입니다</h1>
+        <p>로그인이 정상적으로 완료되었습니다, <strong th:text="${loginName}"></strong>님!</p>
+        <p class="placeholder-sub">
+            좌측 부서 필터, 5개씩 페이지네이션, 상세 모달, 인쇄/CSV 내보내기 기능은<br>
+            다음 개발 단계에서 이 화면에 채워질 예정입니다.
+        </p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-title">IT 자산관리 시스템 · Portfolio Project</div>
+    <div class="footer-contact">
+        <span>👤 김민찬</span>
+        <span>✉️ kmc34633@naver.com</span>
+        <span>📞 010-3463-5279</span>
+    </div>
+    <div class="footer-copy">&copy; 2026 Minchan Kim. All rights reserved.</div>
+</footer>
+
+<!-- 로그아웃 확인 모달 -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal-box logout-modal-box">
+        <div class="logout-modal-icon">🚪</div>
+        <h2>로그아웃 하시겠습니까?</h2>
+        <p>다시 사용하시려면 로그인이 필요합니다.</p>
+        <div class="logout-modal-actions">
+            <button type="button" class="btn btn-outline" id="logoutCancelBtn">취소</button>
+            <form th:action="@{/logout}" method="get">
+                <button type="submit" class="btn btn-danger">로그아웃</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/dashboard/assets-home.js}"></script>
+</body>
+</html>

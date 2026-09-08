@@ -1,0 +1,419 @@
+/* =========================================================
+   dashboard.css
+   대시보드 화면 전용 스타일
+   - 공통 헤더/푸터/모달 뼈대는 common.css 기준을 따르되,
+     common.css의 클래스명이 다를 경우 이 파일의 선택자를
+     프로젝트 공통 클래스명에 맞게 조정하세요.
+   ========================================================= */
+
+:root {
+    --color-primary: #2f6fed;
+    --color-primary-dark: #1d4fc4;
+    --color-bg: #f4f6fb;
+    --color-card-bg: #ffffff;
+    --color-border: #e3e7ef;
+    --color-text-main: #222b3a;
+    --color-text-sub: #6b7688;
+
+    --color-normal: #2e9e5b;
+    --color-normal-bg: #e7f7ee;
+    --color-repair: #e08a1e;
+    --color-repair-bg: #fdf1e0;
+    --color-disposed: #6b7280;
+    --color-disposed-bg: #eceef1;
+    --color-total: #2f6fed;
+    --color-total-bg: #e9f0fe;
+
+    --shadow-card: 0 2px 10px rgba(30, 41, 59, 0.06);
+    --shadow-card-hover: 0 10px 24px rgba(30, 41, 59, 0.12);
+    --radius-lg: 16px;
+    --radius-md: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-bg);
+    font-size: 17px;
+    color: var(--color-text-main);
+}
+
+/* ===================== 헤더 ===================== */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 2px 8px rgba(30, 41, 59, 0.04);
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1280px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.logo-icon {
+    font-size: 24px;
+}
+
+.main-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-link {
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-text-sub);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--color-total-bg);
+    color: var(--color-primary);
+}
+
+.nav-link.active {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--color-text-sub);
+    font-weight: 600;
+}
+
+.user-name {
+    color: var(--color-text-main);
+}
+
+.user-divider {
+    color: var(--color-border);
+}
+
+.btn-logout {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #4a5568;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-logout:hover {
+    background-color: #333e4e;
+    transform: translateY(-1px);
+}
+
+/* ===================== 메인 콘텐츠 ===================== */
+.main-content {
+    padding-top: 72px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+}
+
+.page-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px;
+}
+
+.page-title-area {
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--color-text-main);
+    margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: var(--color-text-sub);
+    margin: 0;
+}
+
+/* ===================== 통계 카드 ===================== */
+.stat-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.stat-icon-wrap {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+}
+
+.stat-body {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-sub);
+    margin: 0 0 6px 0;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--color-text-main);
+    margin: 0;
+}
+
+.stat-badge {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+/* 전체 자산 (파랑) */
+.stat-total::before { background-color: var(--color-total); }
+.stat-total .stat-icon-wrap { background-color: var(--color-total-bg); }
+
+/* 정상 (초록) */
+.stat-normal::before { background-color: var(--color-normal); }
+.stat-normal .stat-icon-wrap { background-color: var(--color-normal-bg); }
+.badge-normal { background-color: var(--color-normal-bg); color: var(--color-normal); }
+
+/* 수리중 (주황) */
+.stat-repair::before { background-color: var(--color-repair); }
+.stat-repair .stat-icon-wrap { background-color: var(--color-repair-bg); }
+.badge-repair { background-color: var(--color-repair-bg); color: var(--color-repair); }
+
+/* 폐기 (회색) */
+.stat-disposed::before { background-color: var(--color-disposed); }
+.stat-disposed .stat-icon-wrap { background-color: var(--color-disposed-bg); }
+.badge-disposed { background-color: var(--color-disposed-bg); color: var(--color-disposed); }
+
+/* ===================== 플레이스홀더 (다음 단계 안내) ===================== */
+.placeholder-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.placeholder-box {
+    background-color: var(--color-card-bg);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--color-text-sub);
+}
+
+.placeholder-icon {
+    font-size: 32px;
+    margin: 0 0 12px 0;
+}
+
+.placeholder-text {
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ===================== 로그아웃 모달 ===================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(20, 26, 38, 0.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background-color: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 16px 40px rgba(20, 26, 38, 0.25);
+    animation: modal-pop 0.18s ease-out;
+}
+
+@keyframes modal-pop {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    color: var(--color-text-main);
+}
+
+.modal-message {
+    font-size: 15px;
+    color: var(--color-text-sub);
+    margin: 0 0 24px 0;
+}
+
+.modal-btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-modal {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-cancel {
+    background-color: #eef1f6;
+    color: var(--color-text-sub);
+}
+
+.btn-cancel:hover {
+    background-color: #e1e5ec;
+}
+
+.btn-confirm {
+    background-color: #e0503c;
+    color: #ffffff;
+}
+
+.btn-confirm:hover {
+    background-color: #c8402e;
+}
+
+/* ===================== 푸터 ===================== */
+.app-footer {
+    position: relative;
+    padding: 20px 32px;
+    background-color: #ffffff;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.footer-inner {
+    font-size: 13px;
+    color: var(--color-text-sub);
+}
+
+.footer-divider {
+    margin: 0 10px;
+    color: var(--color-border);
+}
+
+/* ===================== 반응형 ===================== */
+@media (max-width: 1080px) {
+    .stat-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .placeholder-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-left {
+        gap: 16px;
+    }
+    .main-nav {
+        display: none;
+    }
+    .stat-card-grid {
+        grid-template-columns: 1fr;
+    }
+}

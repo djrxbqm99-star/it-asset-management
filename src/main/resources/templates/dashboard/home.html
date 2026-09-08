@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 | IT 자산관리 시스템</title>
+
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <!-- 대시보드 전용 스타일 -->
+    <link rel="stylesheet" th:href="@{/css/dashboard/dashboard.css}">
+</head>
+<body>
+
+<!-- ===================== 헤더 ===================== -->
+<header class="app-header">
+    <div class="header-inner">
+        <div class="header-left">
+            <a th:href="@{/dashboard}" class="logo">
+                <span class="logo-icon">🖥️</span>
+                <span class="logo-text">IT 자산관리 시스템</span>
+            </a>
+            <nav class="main-nav">
+                <a th:href="@{/dashboard}" class="nav-link active">대시보드</a>
+                <a th:href="@{/assets}" class="nav-link">자산 목록</a>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <div class="user-info">
+                <span class="user-dept" th:text="${loginStaff != null ? loginStaff.department : '전산팀'}">전산팀</span>
+                <span class="user-divider">|</span>
+                <span class="user-name" th:text="${loginStaff != null ? loginStaff.name + ' 님' : '홍길동 님'}">홍길동 님</span>
+            </div>
+            <button type="button" class="btn-logout" id="btnLogout">로그아웃</button>
+        </div>
+    </div>
+</header>
+
+<!-- ===================== 메인 콘텐츠 ===================== -->
+<main class="main-content">
+    <div class="page-container">
+
+        <div class="page-title-area">
+            <h1 class="page-title">대시보드</h1>
+            <p class="page-subtitle">전체 자산 현황을 한눈에 확인하세요</p>
+        </div>
+
+        <!-- 통계 카드 영역 -->
+        <section class="stat-card-grid">
+
+            <!-- 전체 자산 -->
+            <div class="stat-card stat-total">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">📦</span>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">전체 자산</p>
+                    <p class="stat-value" th:text="${totalCount} + ' 건'">0 건</p>
+                </div>
+            </div>
+
+            <!-- 정상 -->
+            <div class="stat-card stat-normal">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">✅</span>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">정상</p>
+                    <p class="stat-value" th:text="${normalCount} + ' 건'">0 건</p>
+                </div>
+                <span class="stat-badge badge-normal">NORMAL</span>
+            </div>
+
+            <!-- 수리중 -->
+            <div class="stat-card stat-repair">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">🛠️</span>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">수리중</p>
+                    <p class="stat-value" th:text="${repairCount} + ' 건'">0 건</p>
+                </div>
+                <span class="stat-badge badge-repair">REPAIR</span>
+            </div>
+
+            <!-- 폐기 -->
+            <div class="stat-card stat-disposed">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">🗑️</span>
+                </div>
+                <div class="stat-body">
+                    <p class="stat-label">폐기</p>
+                    <p class="stat-value" th:text="${disposedCount} + ' 건'">0 건</p>
+                </div>
+                <span class="stat-badge badge-disposed">DISPOSED</span>
+            </div>
+
+        </section>
+
+        <!-- 다음 단계 안내 (플레이스홀더) -->
+        <section class="placeholder-section">
+            <div class="placeholder-box">
+                <p class="placeholder-icon">📊</p>
+                <p class="placeholder-text">부서별 · 상태별 통계 그래프는 다음 단계에서 추가될 예정입니다.</p>
+            </div>
+            <div class="placeholder-box">
+                <p class="placeholder-icon">📋</p>
+                <p class="placeholder-text">최근 등록/변경된 자산 목록 테이블은 다음 단계에서 추가될 예정입니다.</p>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<!-- ===================== 로그아웃 확인 모달 ===================== -->
+<div class="modal-overlay" id="logoutModalOverlay">
+    <div class="modal-box">
+        <h2 class="modal-title">로그아웃</h2>
+        <p class="modal-message">정말 로그아웃 하시겠습니까?</p>
+        <div class="modal-btn-group">
+            <button type="button" class="btn-modal btn-cancel" id="btnLogoutCancel">취소</button>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn-modal btn-confirm">로그아웃</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== 푸터 ===================== -->
+<footer class="app-footer">
+    <div class="footer-inner">
+        <span>이름 : 김민찬</span>
+        <span class="footer-divider">|</span>
+        <span>메일 : kmc34633@naver.com</span>
+        <span class="footer-divider">|</span>
+        <span>전화번호 : 010-3463-5279</span>
+    </div>
+</footer>
+
+<script th:src="@{/js/dashboard/dashboard.js}"></script>
+</body>
+</html>

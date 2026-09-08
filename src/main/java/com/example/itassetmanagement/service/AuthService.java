@@ -30,4 +30,12 @@ public class AuthService {
 
         staffRepository.save(staff);
     }
+
+    // 회원가입 화면에서 아이디 중복 확인(AJAX)에 사용
+    public boolean isUsernameAvailable(String username) {
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+        return !staffRepository.existsByUsername(username);
+    }
 }

@@ -1,0 +1,93 @@
+/* ============================================
+   signup.css - 회원가입 페이지 전용 (부서 선택 모달)
+   경로: src/main/resources/static/css/signup.css
+   ============================================ */
+
+.department-select-btn {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #FAFBFC;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.department-select-btn:hover {
+    border-color: var(--color-primary);
+    background: #fff;
+}
+
+.department-select-btn.selected span:first-child {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.department-select-btn:not(.selected) span:first-child {
+    color: #9AA0AC;
+}
+
+.department-select-arrow {
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* ---------- 부서 선택 모달 ---------- */
+.department-modal-box {
+    width: 340px;
+    padding: 32px 28px;
+    text-align: center;
+}
+
+.department-modal-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.department-modal-sub {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    margin: 0 0 22px;
+}
+
+.department-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.department-list li {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.department-list li:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    transform: translateX(2px);
+}
+
+.department-list li.active {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 700;
+}

@@ -1,0 +1,125 @@
+/* ============================================
+   assets-home.css - 로그인 후 착지 페이지(임시) 전용
+   경로: src/main/resources/static/css/dashboard/assets-home.css
+   ============================================ */
+
+.welcome-text {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin-right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.welcome-dept {
+    color: var(--color-text-muted);
+}
+
+.welcome-name {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.logout-btn {
+    height: 40px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.logout-btn:hover {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+.placeholder-wrap {
+    min-height: calc(100vh - 64px - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.placeholder-box {
+    max-width: 480px;
+    text-align: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    box-shadow: var(--shadow-sm);
+}
+
+.placeholder-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+}
+
+.placeholder-box h1 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+.placeholder-box p {
+    font-size: 15px;
+    color: var(--color-text);
+    margin: 0 0 8px;
+}
+
+.placeholder-sub {
+    font-size: 13.5px;
+    color: var(--color-text-muted) !important;
+    line-height: 1.7;
+    margin-top: 16px !important;
+}
+
+/* ---------- 로그아웃 확인 모달 ---------- */
+.logout-modal-box {
+    width: 340px;
+    padding: 36px 32px;
+    text-align: center;
+}
+
+.logout-modal-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
+}
+
+.logout-modal-box h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.logout-modal-box p {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0 0 26px;
+}
+
+.logout-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.logout-modal-actions .btn {
+    flex: 1;
+    height: 46px;
+}
+
+.logout-modal-actions form {
+    flex: 1;
+}
+
+.logout-modal-actions form .btn {
+    width: 100%;
+}

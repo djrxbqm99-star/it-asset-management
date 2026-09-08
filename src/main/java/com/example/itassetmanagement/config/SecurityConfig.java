@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/home",
                                 "/login", "/signup",
+                                "/api/check-username",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
                         // 나머지는 로그인 필요

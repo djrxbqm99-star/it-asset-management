@@ -3,95 +3,119 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - IT 자산관리 시스템</title>
-    <style>
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            font-size: 16px;
-            background: #f5f5f3;
-            margin: 0;
-        }
-        .box {
-            max-width: 400px;
-            margin: 80px auto;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 40px;
-        }
-        h1 {
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        label {
-            display: block;
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 6px;
-        }
-        input {
-            width: 100%;
-            height: 44px;
-            font-size: 16px;
-            padding: 0 12px;
-            margin-bottom: 16px;
-            border: 1px solid #bbb;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            height: 48px;
-            font-size: 18px;
-            font-weight: 500;
-            background: #2f6fed;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        .field-error {
-            color: #c0392b;
-            font-size: 13px;
-            margin: -10px 0 12px;
-        }
-        .msg.error {
-            color: #c0392b;
-            font-size: 14px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/auth/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/auth/signup.css}">
 </head>
-<body>
+<body class="auth-body">
 
-<div class="box">
-    <h1>회원가입</h1>
+<header class="site-header">
+    <a th:href="@{/}" class="logo"><span class="dot"></span>IT 자산관리 시스템</a>
+    <nav>
+        <a th:href="@{/}">홈</a>
+        <a th:href="@{/login}" class="primary">로그인</a>
+    </nav>
+</header>
 
-    <p class="msg error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+<div class="auth-wrap">
+    <div class="auth-card auth-card-wide fade-up">
+        <div class="auth-icon">📝</div>
+        <h1>계정을 만들어보세요</h1>
+        <p class="auth-sub">몇 가지 정보만 입력하면 바로 시작할 수 있어요</p>
 
-    <form th:action="@{/signup}" th:object="${signupRequestDto}" method="post">
-        <label for="username">아이디</label>
-        <input type="text" id="username" th:field="*{username}" placeholder="4자 이상 입력"/>
-        <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+        <p class="auth-msg auth-msg-error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
 
-        <label for="password">비밀번호</label>
-        <input type="password" id="password" th:field="*{password}" placeholder="4자 이상 입력"/>
-        <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+        <form th:action="@{/signup}" th:object="${signupRequestDto}" method="post" class="auth-form" id="signupForm" novalidate>
 
-        <label for="name">이름</label>
-        <input type="text" id="name" th:field="*{name}" placeholder="실명 입력"/>
-        <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            <!-- 아이디 + 중복확인 -->
+            <div class="input-group">
+                <label for="username">아이디</label>
+                <div class="check-input-wrap">
+                    <input type="text" id="username" th:field="*{username}" placeholder="4자 이상 영문/숫자" autocomplete="off"/>
+                    <span class="check-status" id="usernameCheckStatus"></span>
+                </div>
+                <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                <p class="field-hint" id="usernameHint"></p>
+            </div>
 
-        <label for="department">부서</label>
-        <input type="text" id="department" th:field="*{department}" placeholder="예: 개발팀 (선택)"/>
+            <!-- 비밀번호 -->
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <div class="password-wrap">
+                    <input type="password" id="password" th:field="*{password}" placeholder="4자 이상 입력"/>
+                    <button type="button" class="password-toggle">👁️</button>
+                </div>
+                <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                <p class="field-hint" id="passwordHint"></p>
+            </div>
 
-        <button type="submit">가입하기</button>
-    </form>
+            <!-- 비밀번호 확인 -->
+            <div class="input-group">
+                <label for="passwordConfirm">비밀번호 확인</label>
+                <div class="password-wrap">
+                    <input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요"/>
+                    <button type="button" class="password-toggle">👁️</button>
+                </div>
+                <p class="field-hint" id="passwordConfirmHint"></p>
+            </div>
+
+            <!-- 이름 -->
+            <div class="input-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" th:field="*{name}" placeholder="실명을 입력하세요"/>
+                <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            </div>
+
+            <!-- 부서 선택 (모달) -->
+            <div class="input-group">
+                <label for="departmentDisplay">부서 <span class="optional">(선택)</span></label>
+                <input type="hidden" id="department" th:field="*{department}"/>
+                <button type="button" class="department-select-btn" id="departmentSelectBtn">
+                    <span id="departmentDisplay">부서를 선택하세요</span>
+                    <span class="department-select-arrow">▾</span>
+                </button>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit" id="signupSubmitBtn">가입하기</button>
+        </form>
+
+        <div class="auth-footer-link">
+            이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+        </div>
+    </div>
 </div>
 
+<footer class="site-footer">
+    <div class="footer-title">IT 자산관리 시스템 · Portfolio Project</div>
+    <div class="footer-contact">
+        <span>👤 김민찬</span>
+        <span>✉️ kmc34633@naver.com</span>
+        <span>📞 010-3463-5279</span>
+    </div>
+    <div class="footer-copy">&copy; 2026 Minchan Kim. All rights reserved.</div>
+</footer>
+
+<!-- 부서 선택 모달 -->
+<div class="modal-overlay" id="departmentModal">
+    <div class="modal-box department-modal-box">
+        <button class="modal-close-btn" id="departmentCloseBtn">✕</button>
+        <h2 class="department-modal-title">부서 선택</h2>
+        <p class="department-modal-sub">소속된 부서를 선택해 주세요</p>
+
+        <ul class="department-list">
+            <li data-value="개발팀">💻 개발팀</li>
+            <li data-value="총무팀">🗂️ 총무팀</li>
+            <li data-value="인사팀">🧑‍💼 인사팀</li>
+            <li data-value="영업팀">📈 영업팀</li>
+            <li data-value="IT운영팀">🖧 IT운영팀</li>
+            <li data-value="기타">➕ 기타</li>
+        </ul>
+    </div>
+</div>
+
+<script th:src="@{/js/auth.js}"></script>
+<script th:src="@{/js/signup.js}"></script>
 </body>
 </html>
