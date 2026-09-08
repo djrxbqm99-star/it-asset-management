@@ -1,180 +1,134 @@
 /* =========================================================
    dashboard.css
    대시보드 화면 전용 스타일
-   - 공통 헤더/푸터/모달 뼈대는 common.css 기준을 따르되,
-     common.css의 클래스명이 다를 경우 이 파일의 선택자를
-     프로젝트 공통 클래스명에 맞게 조정하세요.
+
+   ※ 헤더(site-header), 푸터(site-footer), 로그아웃 모달
+     (modal-overlay / modal-box / logout-modal-box 등)은
+     common.css 및 assets-home.css에서 이미 정의된 스타일을
+     그대로 사용합니다. 이 파일에서는 절대 재정의하지 않습니다.
+
+   ※ 이 파일은 오직 대시보드 화면 고유 요소만 다룹니다:
+     - 통계 카드 4개
+     - 하단 플레이스홀더 안내 박스
    ========================================================= */
 
 :root {
-    --color-primary: #2f6fed;
-    --color-primary-dark: #1d4fc4;
-    --color-bg: #f4f6fb;
-    --color-card-bg: #ffffff;
-    --color-border: #e3e7ef;
-    --color-text-main: #222b3a;
-    --color-text-sub: #6b7688;
+    --dash-color-normal: #2e9e5b;
+    --dash-color-normal-bg: #e7f7ee;
+    --dash-color-repair: #e08a1e;
+    --dash-color-repair-bg: #fdf1e0;
+    --dash-color-disposed: #6b7280;
+    --dash-color-disposed-bg: #eceef1;
+    --dash-color-total: #2f6fed;
+    --dash-color-total-bg: #e9f0fe;
 
-    --color-normal: #2e9e5b;
-    --color-normal-bg: #e7f7ee;
-    --color-repair: #e08a1e;
-    --color-repair-bg: #fdf1e0;
-    --color-disposed: #6b7280;
-    --color-disposed-bg: #eceef1;
-    --color-total: #2f6fed;
-    --color-total-bg: #e9f0fe;
-
-    --shadow-card: 0 2px 10px rgba(30, 41, 59, 0.06);
-    --shadow-card-hover: 0 10px 24px rgba(30, 41, 59, 0.12);
-    --radius-lg: 16px;
-    --radius-md: 10px;
+    --dash-shadow-card: 0 2px 10px rgba(30, 41, 59, 0.06);
+    --dash-shadow-card-hover: 0 10px 24px rgba(30, 41, 59, 0.12);
+    --dash-radius-lg: 16px;
 }
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    background-color: var(--color-bg);
-    font-size: 17px;
-    color: var(--color-text-main);
-}
-
-/* ===================== 헤더 ===================== */
-.app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 72px;
-    background-color: #ffffff;
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 2px 8px rgba(30, 41, 59, 0.04);
-    z-index: 100;
-}
-
-.header-inner {
-    max-width: 1280px;
-    height: 100%;
-    margin: 0 auto;
-    padding: 0 32px;
-    display: flex;
+/* ===================== 헤더 로그인 정보 / 로그아웃 버튼 =====================
+   assets-home.css와 완전히 동일한 값 (common.css 변수 그대로 사용) */
+.welcome-text {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin-right: 12px;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 4px;
 }
 
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 40px;
+.welcome-dept {
+    color: var(--color-text-muted);
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    color: var(--color-text-main);
-    font-weight: 800;
-    font-size: 20px;
-}
-
-.logo-icon {
-    font-size: 24px;
-}
-
-.main-nav {
-    display: flex;
-    gap: 8px;
-}
-
-.nav-link {
-    padding: 10px 18px;
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--color-text-sub);
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.nav-link:hover {
-    background-color: var(--color-total-bg);
+.welcome-name {
     color: var(--color-primary);
-}
-
-.nav-link.active {
-    background-color: var(--color-primary);
-    color: #ffffff;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    color: var(--color-text-sub);
-    font-weight: 600;
-}
-
-.user-name {
-    color: var(--color-text-main);
-}
-
-.user-divider {
-    color: var(--color-border);
-}
-
-.btn-logout {
-    padding: 10px 20px;
-    font-size: 15px;
     font-weight: 700;
-    color: #ffffff;
-    background-color: #4a5568;
-    border: none;
-    border-radius: var(--radius-md);
+}
+
+.logout-btn {
+    height: 40px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.15s ease;
+    transition: var(--transition);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.btn-logout:hover {
-    background-color: #333e4e;
-    transform: translateY(-1px);
+.logout-btn:hover {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
 }
 
-/* ===================== 메인 콘텐츠 ===================== */
-.main-content {
-    padding-top: 72px;
-    padding-bottom: 100px;
-    min-height: 100vh;
+/* ===================== 로그아웃 확인 모달 =====================
+   assets-home.css와 완전히 동일한 값 */
+.logout-modal-box {
+    width: 340px;
+    padding: 36px 32px;
+    text-align: center;
 }
 
-.page-container {
-    max-width: 1280px;
+.logout-modal-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
+}
+
+.logout-modal-box h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.logout-modal-box p {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0 0 26px;
+}
+
+.logout-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.logout-modal-actions .btn {
+    flex: 1;
+    height: 46px;
+}
+
+.logout-modal-actions form {
+    flex: 1;
+}
+
+.logout-modal-actions form .btn {
+    width: 100%;
+}
+
+/* ===================== 페이지 컨테이너 ===================== */
+.dashboard-wrap {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 32px;
+    padding: 48px 32px 80px;
 }
 
 .page-title-area {
     margin-bottom: 32px;
 }
 
-.page-title {
+.page-title-area h1 {
     font-size: 30px;
     font-weight: 800;
-    color: var(--color-text-main);
     margin: 0 0 8px 0;
 }
 
-.page-subtitle {
+.page-title-area p {
     font-size: 16px;
-    color: var(--color-text-sub);
+    color: #6b7688;
     margin: 0;
 }
 
@@ -191,11 +145,11 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    background-color: var(--color-card-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background-color: #ffffff;
+    border: 1px solid #e3e7ef;
+    border-radius: var(--dash-radius-lg);
     padding: 28px 24px;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--dash-shadow-card);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
 }
@@ -211,7 +165,7 @@ body {
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--dash-shadow-card-hover);
 }
 
 .stat-icon-wrap {
@@ -232,14 +186,14 @@ body {
 .stat-label {
     font-size: 15px;
     font-weight: 600;
-    color: var(--color-text-sub);
+    color: #6b7688;
     margin: 0 0 6px 0;
 }
 
 .stat-value {
     font-size: 28px;
     font-weight: 800;
-    color: var(--color-text-main);
+    color: #222b3a;
     margin: 0;
 }
 
@@ -255,23 +209,23 @@ body {
 }
 
 /* 전체 자산 (파랑) */
-.stat-total::before { background-color: var(--color-total); }
-.stat-total .stat-icon-wrap { background-color: var(--color-total-bg); }
+.stat-total::before { background-color: var(--dash-color-total); }
+.stat-total .stat-icon-wrap { background-color: var(--dash-color-total-bg); }
 
 /* 정상 (초록) */
-.stat-normal::before { background-color: var(--color-normal); }
-.stat-normal .stat-icon-wrap { background-color: var(--color-normal-bg); }
-.badge-normal { background-color: var(--color-normal-bg); color: var(--color-normal); }
+.stat-normal::before { background-color: var(--dash-color-normal); }
+.stat-normal .stat-icon-wrap { background-color: var(--dash-color-normal-bg); }
+.badge-normal { background-color: var(--dash-color-normal-bg); color: var(--dash-color-normal); }
 
 /* 수리중 (주황) */
-.stat-repair::before { background-color: var(--color-repair); }
-.stat-repair .stat-icon-wrap { background-color: var(--color-repair-bg); }
-.badge-repair { background-color: var(--color-repair-bg); color: var(--color-repair); }
+.stat-repair::before { background-color: var(--dash-color-repair); }
+.stat-repair .stat-icon-wrap { background-color: var(--dash-color-repair-bg); }
+.badge-repair { background-color: var(--dash-color-repair-bg); color: var(--dash-color-repair); }
 
 /* 폐기 (회색) */
-.stat-disposed::before { background-color: var(--color-disposed); }
-.stat-disposed .stat-icon-wrap { background-color: var(--color-disposed-bg); }
-.badge-disposed { background-color: var(--color-disposed-bg); color: var(--color-disposed); }
+.stat-disposed::before { background-color: var(--dash-color-disposed); }
+.stat-disposed .stat-icon-wrap { background-color: var(--dash-color-disposed-bg); }
+.badge-disposed { background-color: var(--dash-color-disposed-bg); color: var(--dash-color-disposed); }
 
 /* ===================== 플레이스홀더 (다음 단계 안내) ===================== */
 .placeholder-section {
@@ -280,120 +234,24 @@ body {
     gap: 24px;
 }
 
-.placeholder-box {
-    background-color: var(--color-card-bg);
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius-lg);
+.placeholder-mini-box {
+    background-color: #ffffff;
+    border: 1px dashed #e3e7ef;
+    border-radius: var(--dash-radius-lg);
     padding: 40px 24px;
     text-align: center;
-    color: var(--color-text-sub);
+    color: #6b7688;
 }
 
-.placeholder-icon {
+.placeholder-mini-icon {
     font-size: 32px;
     margin: 0 0 12px 0;
 }
 
-.placeholder-text {
+.placeholder-mini-text {
     font-size: 15px;
     margin: 0;
     line-height: 1.5;
-}
-
-/* ===================== 로그아웃 모달 ===================== */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background-color: rgba(20, 26, 38, 0.55);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-overlay.active {
-    display: flex;
-}
-
-.modal-box {
-    background-color: #ffffff;
-    border-radius: var(--radius-lg);
-    padding: 32px 28px;
-    width: 100%;
-    max-width: 360px;
-    box-shadow: 0 16px 40px rgba(20, 26, 38, 0.25);
-    animation: modal-pop 0.18s ease-out;
-}
-
-@keyframes modal-pop {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.modal-title {
-    font-size: 20px;
-    font-weight: 800;
-    margin: 0 0 12px 0;
-    color: var(--color-text-main);
-}
-
-.modal-message {
-    font-size: 15px;
-    color: var(--color-text-sub);
-    margin: 0 0 24px 0;
-}
-
-.modal-btn-group {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-modal {
-    flex: 1;
-    padding: 12px 0;
-    font-size: 15px;
-    font-weight: 700;
-    border-radius: var(--radius-md);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.btn-cancel {
-    background-color: #eef1f6;
-    color: var(--color-text-sub);
-}
-
-.btn-cancel:hover {
-    background-color: #e1e5ec;
-}
-
-.btn-confirm {
-    background-color: #e0503c;
-    color: #ffffff;
-}
-
-.btn-confirm:hover {
-    background-color: #c8402e;
-}
-
-/* ===================== 푸터 ===================== */
-.app-footer {
-    position: relative;
-    padding: 20px 32px;
-    background-color: #ffffff;
-    border-top: 1px solid var(--color-border);
-    text-align: center;
-}
-
-.footer-inner {
-    font-size: 13px;
-    color: var(--color-text-sub);
-}
-
-.footer-divider {
-    margin: 0 10px;
-    color: var(--color-border);
 }
 
 /* ===================== 반응형 ===================== */
@@ -407,12 +265,6 @@ body {
 }
 
 @media (max-width: 640px) {
-    .header-left {
-        gap: 16px;
-    }
-    .main-nav {
-        display: none;
-    }
     .stat-card-grid {
         grid-template-columns: 1fr;
     }

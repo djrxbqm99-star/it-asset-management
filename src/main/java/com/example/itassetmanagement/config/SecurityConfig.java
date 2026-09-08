@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")   // 로그인 폼 action 경로
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/assets", true) // 로그인 성공 시 이동할 페이지 (자산 목록)
+                        .defaultSuccessUrl("/dashboard", true) // 로그인 성공 시 이동할 페이지 (대시보드)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

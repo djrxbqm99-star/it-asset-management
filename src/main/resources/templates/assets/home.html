@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -13,6 +14,7 @@
 <header class="site-header">
     <a th:href="@{/}" class="logo"><span class="dot"></span>IT 자산관리 시스템</a>
     <nav>
+        <a th:href="@{/dashboard}">대시보드</a>
         <a th:href="@{/assets}" class="primary">자산 목록</a>
         <span class="welcome-text">
             🏢 <span class="welcome-dept" th:text="${loginDepartment} ?: '소속 미지정'"></span>

@@ -22,4 +22,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     // 담당자 기준 aside 필터용 (부서별)
     Page<Asset> findByCurrentStaff_Department(String department, Pageable pageable);
+
+    // 대시보드 통계 카드용 - 상태별 건수 집계 (전체 건수는 상속받은 count() 사용)
+    long countByStatus(String status);
 }

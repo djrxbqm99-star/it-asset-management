@@ -2,34 +2,38 @@
    dashboard.js
    대시보드 화면 전용 스크립트
    - 로그아웃 확인 모달 열기/닫기 제어
+   - assets-home.js와 동일한 id 규칙(logoutOpenBtn / logoutModal / logoutCancelBtn) 사용
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const btnLogout = document.getElementById("btnLogout");
-    const btnLogoutCancel = document.getElementById("btnLogoutCancel");
-    const logoutModalOverlay = document.getElementById("logoutModalOverlay");
+    const logoutOpenBtn = document.getElementById("logoutOpenBtn");
+    const logoutCancelBtn = document.getElementById("logoutCancelBtn");
+    const logoutModal = document.getElementById("logoutModal");
 
     function openLogoutModal() {
-        logoutModalOverlay.classList.add("active");
+        logoutModal.classList.add("open");
     }
 
     function closeLogoutModal() {
-        logoutModalOverlay.classList.remove("active");
+        logoutModal.classList.remove("open");
     }
 
-    if (btnLogout) {
-        btnLogout.addEventListener("click", openLogoutModal);
+    if (logoutOpenBtn) {
+        logoutOpenBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            openLogoutModal();
+        });
     }
 
-    if (btnLogoutCancel) {
-        btnLogoutCancel.addEventListener("click", closeLogoutModal);
+    if (logoutCancelBtn) {
+        logoutCancelBtn.addEventListener("click", closeLogoutModal);
     }
 
     // 모달 바깥 영역 클릭 시 닫기
-    if (logoutModalOverlay) {
-        logoutModalOverlay.addEventListener("click", function (e) {
-            if (e.target === logoutModalOverlay) {
+    if (logoutModal) {
+        logoutModal.addEventListener("click", function (e) {
+            if (e.target === logoutModal) {
                 closeLogoutModal();
             }
         });
@@ -37,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ESC 키로 모달 닫기
     document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && logoutModalOverlay.classList.contains("active")) {
+        if (e.key === "Escape" && logoutModal && logoutModal.classList.contains("open")) {
             closeLogoutModal();
         }
     });
