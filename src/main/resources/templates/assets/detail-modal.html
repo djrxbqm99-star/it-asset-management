@@ -1,0 +1,67 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content">
+
+    <button class="modal-close-btn" onclick="closeDetailModal()">✕</button>
+
+    <div class="detail-modal-header">
+        <h2 th:text="${asset.assetName}">자산명</h2>
+        <span class="status-badge detail-status-badge"
+              th:classappend="${asset.status == '정상'} ? 'badge-normal' : (${asset.status == '수리중'} ? 'badge-repair' : 'badge-disposed')"
+              th:text="${asset.status}">정상</span>
+    </div>
+
+    <div class="detail-info-grid">
+        <div class="detail-info-item">
+            <span class="detail-label">자산관리번호</span>
+            <span class="detail-value" th:text="${asset.assetCode}"></span>
+        </div>
+        <div class="detail-info-item">
+            <span class="detail-label">자산 종류</span>
+            <span class="detail-value" th:text="${asset.assetType}"></span>
+        </div>
+        <div class="detail-info-item">
+            <span class="detail-label">현재 담당자</span>
+            <span class="detail-value"
+                  th:text="${asset.currentStaff != null ? asset.currentStaff.name + ' (' + asset.currentStaff.department + ')' : '담당자 없음'}"></span>
+        </div>
+        <div class="detail-info-item">
+            <span class="detail-label">구매일자</span>
+            <span class="detail-value" th:text="${asset.purchaseDate != null ? asset.purchaseDate : '-'}"></span>
+        </div>
+    </div>
+
+    <h3 class="detail-section-title">담당자 인수인계 이력</h3>
+
+    <div class="timeline">
+        <div class="timeline-item" th:each="h : ${historyList}">
+            <div class="timeline-dot" th:classappend="${h.current} ? 'dot-current' : ''"></div>
+            <div class="timeline-content">
+                <div class="timeline-top">
+                    <strong th:text="${h.staff.name}">담당자명</strong>
+                    <span class="timeline-current-badge" th:if="${h.current}">현재 담당</span>
+                </div>
+                <div class="timeline-period">
+                    <span th:text="${h.startDate}"></span> ~
+                    <span th:text="${h.endDate != null ? h.endDate : '현재'}"></span>
+                </div>
+                <div class="timeline-reason" th:if="${h.reason != null and !h.reason.isEmpty()}" th:text="${h.reason}"></div>
+            </div>
+        </div>
+
+        <p class="timeline-empty" th:if="${historyList.isEmpty()}">등록된 인수인계 이력이 없습니다.</p>
+    </div>
+
+    <div class="detail-modal-actions">
+        <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ 인쇄</button>
+        <button type="button" class="btn btn-primary" onclick="closeDetailModal()">닫기</button>
+    </div>
+
+</div>
+
+</body>
+</html>
