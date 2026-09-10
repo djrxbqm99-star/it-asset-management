@@ -31,11 +31,11 @@
         <h3 class="aside-title">부서별 보기</h3>
         <ul class="dept-filter-list">
             <li>
-                <a th:href="@{/assets(status=${selectedStatus}, keyword=${selectedKeyword})}"
+                <a th:href="@{/assets(status=${selectedStatus}, staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                    th:classappend="${selectedDepartment == null} ? 'dept-active'">전체 부서</a>
             </li>
             <li th:each="dept : ${departments}">
-                <a th:href="@{/assets(department=${dept}, status=${selectedStatus}, keyword=${selectedKeyword})}"
+                <a th:href="@{/assets(department=${dept}, status=${selectedStatus}, staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                    th:classappend="${dept == selectedDepartment} ? 'dept-active'"
                    th:text="${dept}"></a>
             </li>
@@ -50,23 +50,23 @@
 
             <div class="toolbar-actions">
                 <div class="status-chip-group">
-                    <a th:href="@{/assets(department=${selectedDepartment}, keyword=${selectedKeyword})}"
+                    <a th:href="@{/assets(department=${selectedDepartment}, staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                        class="status-chip"
                        th:classappend="${selectedStatus == null} ? 'chip-active'">전체</a>
-                    <a th:href="@{/assets(department=${selectedDepartment}, status='정상', keyword=${selectedKeyword})}"
+                    <a th:href="@{/assets(department=${selectedDepartment}, status='정상', staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                        class="status-chip chip-normal"
                        th:classappend="${selectedStatus == '정상'} ? 'chip-active'">정상</a>
-                    <a th:href="@{/assets(department=${selectedDepartment}, status='수리중', keyword=${selectedKeyword})}"
+                    <a th:href="@{/assets(department=${selectedDepartment}, status='수리중', staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                        class="status-chip chip-repair"
                        th:classappend="${selectedStatus == '수리중'} ? 'chip-active'">수리중</a>
-                    <a th:href="@{/assets(department=${selectedDepartment}, status='폐기', keyword=${selectedKeyword})}"
+                    <a th:href="@{/assets(department=${selectedDepartment}, status='폐기', staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                        class="status-chip chip-disposed"
                        th:classappend="${selectedStatus == '폐기'} ? 'chip-active'">폐기</a>
                 </div>
 
                 <button type="button" class="btn btn-outline toolbar-btn" id="searchOpenBtn">🔍 검색</button>
                 <a class="btn btn-outline toolbar-btn"
-                   th:href="@{/assets/export(department=${selectedDepartment}, status=${selectedStatus}, keyword=${selectedKeyword})}">
+                   th:href="@{/assets/export(department=${selectedDepartment}, status=${selectedStatus}, staffId=${selectedStaffId}, keyword=${selectedKeyword})}">
                     📥 CSV 내보내기
                 </a>
                 <button type="button" class="btn btn-primary toolbar-btn" id="registerOpenBtn">＋ 자산 등록</button>
@@ -81,7 +81,7 @@
         <div class="active-filter-bar" th:if="${selectedKeyword != null}">
             <span class="active-filter-badge">
                 🔍 "<span th:text="${selectedKeyword}"></span>" 검색 결과
-                <a th:href="@{/assets(department=${selectedDepartment}, status=${selectedStatus})}" class="active-filter-clear">✕</a>
+                <a th:href="@{/assets(department=${selectedDepartment}, status=${selectedStatus}, staffId=${selectedStaffId})}" class="active-filter-clear">✕</a>
             </span>
         </div>
 
@@ -126,7 +126,7 @@
         <!-- 페이지네이션 -->
         <div class="pagination" th:if="${assetPage.totalPages > 1}">
             <a th:each="i : ${#numbers.sequence(0, assetPage.totalPages - 1)}"
-               th:href="@{/assets(page=${i}, department=${selectedDepartment}, status=${selectedStatus}, keyword=${selectedKeyword})}"
+               th:href="@{/assets(page=${i}, department=${selectedDepartment}, status=${selectedStatus}, staffId=${selectedStaffId}, keyword=${selectedKeyword})}"
                th:text="${i + 1}"
                class="page-link"
                th:classappend="${i == assetPage.number} ? 'page-active'"></a>
@@ -212,6 +212,18 @@
                         <span class="picker-arrow">▾</span>
                     </button>
                 </div>
+            </div>
+
+            <div class="input-group">
+                <label>담당자</label>
+                <input type="hidden" id="searchStaffIdValue" name="staffId" th:value="${selectedStaffId}"/>
+                <button type="button" class="picker-btn"
+                        data-picker="staffPickerModal"
+                        data-target-input="searchStaffIdValue"
+                        data-target-display="searchStaffDisplay">
+                    <span id="searchStaffDisplay" th:text="${selectedStaffName} ?: '전체 담당자'">전체 담당자</span>
+                    <span class="picker-arrow">▾</span>
+                </button>
             </div>
 
             <div class="search-modal-actions">
@@ -356,13 +368,21 @@
 </div>
 
 <div class="modal-overlay" id="staffPickerModal">
-    <div class="modal-box picker-modal-box">
+    <div class="modal-box picker-modal-box staff-picker-modal-box">
         <button class="modal-close-btn" onclick="document.getElementById('staffPickerModal').classList.remove('open')">✕</button>
         <h2 class="picker-modal-title">담당자 선택</h2>
-        <ul class="picker-list">
-            <li data-value="">담당자 없음</li>
+
+        <input type="text" class="picker-search-input" id="staffPickerSearch" placeholder="이름으로 검색" autocomplete="off"/>
+
+        <div class="picker-dept-chips" id="staffPickerDeptChips">
+            <button type="button" class="picker-dept-chip active" data-dept="">전체</button>
+            <button type="button" class="picker-dept-chip" th:each="dept : ${departments}" th:attr="data-dept=${dept}" th:text="${dept}"></button>
+        </div>
+
+        <ul class="picker-list" id="staffPickerList">
+            <li data-value="" data-department="" data-name="">담당자 없음</li>
             <li th:each="s : ${staffList}"
-                th:attr="data-value=${s.staffId}"
+                th:attr="data-value=${s.staffId}, data-department=${s.department}, data-name=${s.name}"
                 th:text="${s.name + ' (' + (s.department ?: '소속 미지정') + ')'}"></li>
         </ul>
     </div>

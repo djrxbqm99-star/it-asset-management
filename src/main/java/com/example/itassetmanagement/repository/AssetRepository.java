@@ -39,10 +39,12 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     @Query("SELECT a FROM Asset a WHERE " +
             "(:department IS NULL OR a.currentStaff.department = :department) AND " +
             "(:status IS NULL OR a.status = :status) AND " +
+            "(:staffId IS NULL OR a.currentStaff.staffId = :staffId) AND " +
             "(:keyword IS NULL OR a.assetName LIKE CONCAT('%', :keyword, '%') OR a.assetCode LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY a.assetId DESC")
     Page<Asset> searchAssets(@Param("department") String department,
                              @Param("status") String status,
+                             @Param("staffId") Long staffId,
                              @Param("keyword") String keyword,
                              Pageable pageable);
 
@@ -52,9 +54,11 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     @Query("SELECT a FROM Asset a WHERE " +
             "(:department IS NULL OR a.currentStaff.department = :department) AND " +
             "(:status IS NULL OR a.status = :status) AND " +
+            "(:staffId IS NULL OR a.currentStaff.staffId = :staffId) AND " +
             "(:keyword IS NULL OR a.assetName LIKE CONCAT('%', :keyword, '%') OR a.assetCode LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY a.assetId DESC")
     List<Asset> searchAssetsAll(@Param("department") String department,
                                 @Param("status") String status,
+                                @Param("staffId") Long staffId,
                                 @Param("keyword") String keyword);
 }

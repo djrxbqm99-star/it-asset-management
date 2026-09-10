@@ -50,6 +50,7 @@ public class AssetController {
             @AuthenticationPrincipal StaffUserDetails userDetails,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) String staffId,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             Model model) {
@@ -60,22 +61,44 @@ public class AssetController {
         String normalizedDepartment = normalize(department);
         String normalizedStatus = normalize(status);
         String normalizedKeyword = normalize(keyword);
+        Long normalizedStaffId = parseStaffId(staffId);
 
         PageRequest pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Asset> assetPage = assetRepository.searchAssets(
-                normalizedDepartment, normalizedStatus, normalizedKeyword, pageable);
+                normalizedDepartment, normalizedStatus, normalizedStaffId, normalizedKeyword, pageable);
 
         List<String> departments = assetRepository.findDistinctDepartments();
         List<Staff> staffList = staffRepository.findAll();
+
+        // 검색 모달에 담당자 필터 버튼 초기 표시용 (선택된 담당자 이름)
+        String selectedStaffName = null;
+        if (normalizedStaffId != null) {
+            selectedStaffName = staffRepository.findById(normalizedStaffId)
+                    .map(Staff::getName)
+                    .orElse(null);
+        }
 
         model.addAttribute("assetPage", assetPage);
         model.addAttribute("departments", departments);
         model.addAttribute("staffList", staffList);
         model.addAttribute("selectedDepartment", normalizedDepartment);
         model.addAttribute("selectedStatus", normalizedStatus);
+        model.addAttribute("selectedStaffId", normalizedStaffId);
+        model.addAttribute("selectedStaffName", selectedStaffName);
         model.addAttribute("selectedKeyword", normalizedKeyword);
 
         return "assets/home";
+    }
+
+    // "" 또는 null이면 null, 숫자가 아니면 null, 그 외에는 Long으로 변환
+    private Long parseStaffId(String staffId) {
+        String normalized = normalize(staffId);
+        if (normalized == null) return null;
+        try {
+            return Long.valueOf(normalized);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
@@ -106,7 +129,7 @@ public class AssetController {
             @RequestParam String assetName,
             @RequestParam String assetType,
             @RequestParam(defaultValue = "정상") String status,
-            @RequestParam(required = false) Long staffId,
+            @RequestParam(required = false) String staffId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDate,
             RedirectAttributes redirectAttributes) {
 
@@ -116,9 +139,10 @@ public class AssetController {
             return "redirect:/assets";
         }
 
+        Long normalizedStaffId = parseStaffId(staffId);
         Staff staff = null;
-        if (staffId != null) {
-            staff = staffRepository.findById(staffId).orElse(null);
+        if (normalizedStaffId != null) {
+            staff = staffRepository.findById(normalizedStaffId).orElse(null);
         }
 
         Asset asset = Asset.builder()
@@ -155,14 +179,16 @@ public class AssetController {
     public ResponseEntity<byte[]> exportCsv(
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) String staffId,
             @RequestParam(required = false) String keyword) throws IOException {
 
         String normalizedDepartment = normalize(department);
         String normalizedStatus = normalize(status);
         String normalizedKeyword = normalize(keyword);
+        Long normalizedStaffId = parseStaffId(staffId);
 
         List<Asset> assets = assetRepository.searchAssetsAll(
-                normalizedDepartment, normalizedStatus, normalizedKeyword);
+                normalizedDepartment, normalizedStatus, normalizedStaffId, normalizedKeyword);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(0xEF);

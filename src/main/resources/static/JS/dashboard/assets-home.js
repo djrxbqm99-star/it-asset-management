@@ -310,3 +310,89 @@ function closeDetailModal() {
         }
     });
 })();
+
+/* =========================================================
+   담당자 선택 모달 - 이름 검색 + 부서 칩 필터
+   - 등록 모달이 없는 화면에서는 요소가 없으므로 자동으로 무시됨
+   ========================================================= */
+(function () {
+    const staffSearchInput = document.getElementById("staffPickerSearch");
+    const staffDeptChips = document.getElementById("staffPickerDeptChips");
+    const staffList = document.getElementById("staffPickerList");
+    const staffOpenBtn = document.querySelector('.picker-btn[data-picker="staffPickerModal"]');
+
+    if (!staffSearchInput || !staffList) {
+        return;
+    }
+
+    let activeDept = "";
+
+    function filterStaffList() {
+        const keyword = staffSearchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        staffList.querySelectorAll("li[data-value]").forEach(function (li) {
+            // "담당자 없음" 항목: 검색어/부서 필터가 아무것도 안 걸려있을 때만 노출
+            if (li.dataset.value === "") {
+                const show = keyword === "" && activeDept === "";
+                li.style.display = show ? "" : "none";
+                if (show) visibleCount++;
+                return;
+            }
+
+            const name = (li.dataset.name || "").toLowerCase();
+            const dept = li.dataset.department || "";
+            const matchesKeyword = keyword === "" || name.includes(keyword);
+            const matchesDept = activeDept === "" || dept === activeDept;
+            const show = matchesKeyword && matchesDept;
+            li.style.display = show ? "" : "none";
+            if (show) visibleCount++;
+        });
+
+        let emptyMsg = staffList.querySelector(".picker-empty-msg");
+        if (visibleCount === 0) {
+            if (!emptyMsg) {
+                emptyMsg = document.createElement("li");
+                emptyMsg.className = "picker-empty-msg";
+                emptyMsg.textContent = "검색 결과가 없습니다.";
+                staffList.appendChild(emptyMsg);
+            }
+        } else if (emptyMsg) {
+            emptyMsg.remove();
+        }
+    }
+
+    staffSearchInput.addEventListener("input", filterStaffList);
+
+    if (staffDeptChips) {
+        staffDeptChips.querySelectorAll(".picker-dept-chip").forEach(function (chip) {
+            chip.addEventListener("click", function () {
+                staffDeptChips.querySelectorAll(".picker-dept-chip").forEach(function (c) {
+                    c.classList.remove("active");
+                });
+                chip.classList.add("active");
+                activeDept = chip.dataset.dept || "";
+                filterStaffList();
+            });
+        });
+    }
+
+    // 모달 열릴 때마다 검색어/부서 필터 초기화 + 검색창 포커스
+    if (staffOpenBtn) {
+        staffOpenBtn.addEventListener("click", function () {
+            staffSearchInput.value = "";
+            activeDept = "";
+            if (staffDeptChips) {
+                staffDeptChips.querySelectorAll(".picker-dept-chip").forEach(function (c) {
+                    c.classList.remove("active");
+                });
+                const allChip = staffDeptChips.querySelector('.picker-dept-chip[data-dept=""]');
+                if (allChip) allChip.classList.add("active");
+            }
+            filterStaffList();
+            setTimeout(function () {
+                staffSearchInput.focus();
+            }, 50);
+        });
+    }
+})();
