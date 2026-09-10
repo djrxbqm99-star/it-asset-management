@@ -503,12 +503,56 @@
 
 .detail-modal-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
 .detail-modal-actions .btn {
     flex: 1;
+    min-width: 100px;
     height: 46px;
+}
+
+/* ---------- 상태변경 이력 / 유지보수 이력 리스트 ---------- */
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 24px;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item-icon {
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.history-item-body {
+    flex: 1;
+}
+
+.history-item-top {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+}
+
+.history-item-reason {
+    font-size: 13.5px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
 }
 
 /* ---------- 반응형 ---------- */
@@ -800,6 +844,157 @@
 .assets-msg-error {
     background: #fdeaea;
     color: var(--color-danger);
+}
+
+/* ---------- 자산관리번호 실시간 중복체크 힌트 ---------- */
+.field-hint {
+    font-size: 12.5px;
+    margin: 6px 2px 0;
+    min-height: 16px;
+}
+
+.field-hint-ok {
+    color: #2e9e5b;
+}
+
+.field-hint-error {
+    color: var(--color-danger);
+}
+
+/* ---------- 이용 안내 모달 ---------- */
+.guide-modal-box {
+    width: 460px;
+    max-width: 90vw;
+    padding: 40px 36px;
+}
+
+.guide-modal-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.guide-modal-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.guide-modal-header h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.guide-modal-header p {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 24px;
+}
+
+.guide-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.guide-step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.guide-step-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.guide-step-desc {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.guide-close-cta {
+    width: 100%;
+    height: 48px;
+}
+
+/* ---------- 인수인계 모달 - 현재 담당자 표시 ---------- */
+.handover-current-staff {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 0;
+}
+
+/* ---------- 상태 필터 버튼 라벨 색상 ---------- */
+.status-filter-label-normal { color: #2e9e5b; font-weight: 700; }
+.status-filter-label-repair { color: #e08a1e; font-weight: 700; }
+.status-filter-label-disposed { color: #6b7280; font-weight: 700; }
+
+/* ---------- 상태 필터 선택 모달 ---------- */
+.status-filter-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.status-filter-nav-list a {
+    display: block;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    transition: var(--transition);
+}
+
+.status-filter-nav-list a:hover {
+    background: var(--color-bg);
+}
+
+.status-filter-nav-list a.status-filter-nav-active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.status-filter-nav-normal.status-filter-nav-active { background: #2e9e5b; }
+.status-filter-nav-repair.status-filter-nav-active { background: #e08a1e; }
+.status-filter-nav-disposed.status-filter-nav-active { background: #6b7280; }
+
+/* ---------- 이력 불변 안내 문구 ---------- */
+.history-lock-note {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin: 10px 0 20px;
+    line-height: 1.5;
 }
 
 /* ---------- 구매일자 캘린더 선택 모달 ---------- */

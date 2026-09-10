@@ -31,11 +31,24 @@ public class Staff {
     @Column(length = 50)
     private String department;
 
+    // 권한 구분 (USER / ADMIN) - 관리자(회장님) 페이지 구현 전까지는 전부 USER로 동작
+    @Column(length = 20)
+    @Builder.Default
+    private String role = "USER";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.role == null) {
+            this.role = "USER";
+        }
+    }
+
+    @Transient
+    public boolean isAdmin() {
+        return "ADMIN".equals(this.role);
     }
 }

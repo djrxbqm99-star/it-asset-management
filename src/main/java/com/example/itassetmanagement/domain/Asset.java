@@ -38,6 +38,11 @@ public class Asset {
     @JoinColumn(name = "current_staff_id", foreignKey = @ForeignKey(name = "fk_asset_current_staff"))
     private Staff currentStaff;
 
+    // 이 자산을 "등록한" 직원 (FK, NULL 가능) - 본인 수정 권한 판단 기준
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_staff_id", foreignKey = @ForeignKey(name = "fk_asset_created_by"))
+    private Staff createdBy;
+
     @Column(name = "purchase_date")
     private LocalDate purchaseDate;
 

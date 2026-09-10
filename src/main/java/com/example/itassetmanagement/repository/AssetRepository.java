@@ -17,6 +17,9 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     boolean existsByAssetCode(String assetCode);
 
+    // 자산 수정 시 중복체크용 - 자기 자신(assetId)은 제외하고 검사
+    boolean existsByAssetCodeAndAssetIdNot(String assetCode, Long assetId);
+
     // 목록 페이지네이션 (5개씩) - 상태별 필터링 (레거시, searchAssets로 대체됨)
     Page<Asset> findByStatus(String status, Pageable pageable);
 
@@ -40,11 +43,13 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
             "(:department IS NULL OR a.currentStaff.department = :department) AND " +
             "(:status IS NULL OR a.status = :status) AND " +
             "(:staffId IS NULL OR a.currentStaff.staffId = :staffId) AND " +
+            "(:assetType IS NULL OR a.assetType = :assetType) AND " +
             "(:keyword IS NULL OR a.assetName LIKE CONCAT('%', :keyword, '%') OR a.assetCode LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY a.assetId DESC")
     Page<Asset> searchAssets(@Param("department") String department,
                              @Param("status") String status,
                              @Param("staffId") Long staffId,
+                             @Param("assetType") String assetType,
                              @Param("keyword") String keyword,
                              Pageable pageable);
 
@@ -55,10 +60,12 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
             "(:department IS NULL OR a.currentStaff.department = :department) AND " +
             "(:status IS NULL OR a.status = :status) AND " +
             "(:staffId IS NULL OR a.currentStaff.staffId = :staffId) AND " +
+            "(:assetType IS NULL OR a.assetType = :assetType) AND " +
             "(:keyword IS NULL OR a.assetName LIKE CONCAT('%', :keyword, '%') OR a.assetCode LIKE CONCAT('%', :keyword, '%')) " +
             "ORDER BY a.assetId DESC")
     List<Asset> searchAssetsAll(@Param("department") String department,
                                 @Param("status") String status,
                                 @Param("staffId") Long staffId,
+                                @Param("assetType") String assetType,
                                 @Param("keyword") String keyword);
 }

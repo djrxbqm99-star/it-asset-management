@@ -36,6 +36,7 @@
     </div>
 
     <h3 class="detail-section-title">담당자 인수인계 이력</h3>
+    <p class="history-lock-note">🔒 이력은 새로 추가만 가능하며, 한번 기록되면 수정·삭제할 수 없어요. 잘못 인계했다면 다시 인수인계해서 바로잡아 주세요.</p>
 
     <div class="timeline">
         <div class="timeline-item" th:each="h : ${historyList}">
@@ -56,9 +57,54 @@
         <p class="timeline-empty" th:if="${historyList.isEmpty()}">등록된 인수인계 이력이 없습니다.</p>
     </div>
 
+    <h3 class="detail-section-title">상태 변경 이력</h3>
+
+    <div class="history-list">
+        <div class="history-item" th:each="sh : ${statusHistoryList}">
+            <span class="status-badge"
+                  th:classappend="${sh.changedStatus == '정상'} ? 'badge-normal' : (${sh.changedStatus == '수리중'} ? 'badge-repair' : 'badge-disposed')"
+                  th:text="${sh.changedStatus}"></span>
+            <div class="history-item-body">
+                <div class="history-item-top">
+                    <span th:text="${#temporals.format(sh.changedAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span th:if="${sh.changedBy != null}"> · <span th:text="${sh.changedBy.name}"></span></span>
+                </div>
+                <div class="history-item-reason" th:if="${sh.reason != null and !sh.reason.isEmpty()}" th:text="${sh.reason}"></div>
+            </div>
+        </div>
+        <p class="timeline-empty" th:if="${statusHistoryList.isEmpty()}">상태 변경 이력이 없습니다.</p>
+    </div>
+
+    <h3 class="detail-section-title">유지보수(조치) 이력</h3>
+
+    <div class="history-list">
+        <div class="history-item" th:each="m : ${maintenanceHistoryList}">
+            <span class="history-item-icon">🛠️</span>
+            <div class="history-item-body">
+                <div class="history-item-top">
+                    <span th:text="${#temporals.format(m.maintenanceDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span> · <span th:text="${m.staff.name}"></span></span>
+                </div>
+                <div class="history-item-reason" th:text="${m.actionContent}"></div>
+            </div>
+        </div>
+        <p class="timeline-empty" th:if="${maintenanceHistoryList.isEmpty()}">유지보수 이력이 없습니다.</p>
+    </div>
+
+    <p class="history-lock-note" th:if="${canEdit}">
+        💡 "✏️ 수정"은 자산명·종류 등 기본 정보만 바꿔요. 담당자는 "🔄 인수인계", 상태는 "🔧 상태 변경"으로 바꿔주세요.
+        이 버튼들은 이 자산을 <strong>등록한 사람</strong>에게만 보여요 (현재 담당자와는 별개입니다).
+    </p>
+
     <div class="detail-modal-actions">
         <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ 인쇄</button>
-        <button type="button" class="btn btn-primary" onclick="closeDetailModal()">닫기</button>
+        <button type="button" class="btn btn-outline" th:if="${canEdit}"
+                th:attr="onclick=|openHandoverModal(${asset.assetId}, ${asset.currentStaff != null ? asset.currentStaff.staffId : 'null'}, '${asset.currentStaff != null ? asset.currentStaff.name + (asset.currentStaff.department != null ? (' (' + asset.currentStaff.department + ')') : '') : '담당자 없음'}')|">🔄 인수인계</button>
+        <button type="button" class="btn btn-outline" th:if="${canEdit}"
+                th:attr="onclick=|openStatusChangeModal(${asset.assetId}, '${asset.status}')|">🔧 상태 변경</button>
+        <button type="button" class="btn btn-primary" th:if="${canEdit}"
+                th:attr="onclick=|openEditModal(${asset.assetId})|">✏️ 수정</button>
+        <button type="button" class="btn btn-outline" onclick="closeDetailModal()">닫기</button>
     </div>
 
 </div>
