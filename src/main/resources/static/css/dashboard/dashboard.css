@@ -9,7 +9,8 @@
 
    ※ 이 파일은 오직 대시보드 화면 고유 요소만 다룹니다:
      - 통계 카드 4개
-     - 하단 플레이스홀더 안내 박스
+     - 부서별/상태별 그래프 카드 2개
+     - 최근 등록된 자산 목록 테이블
    ========================================================= */
 
 :root {
@@ -227,31 +228,161 @@
 .stat-disposed .stat-icon-wrap { background-color: var(--dash-color-disposed-bg); }
 .badge-disposed { background-color: var(--dash-color-disposed-bg); color: var(--dash-color-disposed); }
 
-/* ===================== 플레이스홀더 (다음 단계 안내) ===================== */
-.placeholder-section {
+/* ===================== 그래프 영역 ===================== */
+.chart-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1.3fr 1fr;
     gap: 24px;
+    margin-bottom: 40px;
 }
 
-.placeholder-mini-box {
+.chart-card {
     background-color: #ffffff;
-    border: 1px dashed #e3e7ef;
+    border: 1px solid #e3e7ef;
     border-radius: var(--dash-radius-lg);
-    padding: 40px 24px;
-    text-align: center;
-    color: #6b7688;
+    padding: 28px;
+    box-shadow: var(--dash-shadow-card);
+    transition: box-shadow 0.2s ease;
 }
 
-.placeholder-mini-icon {
-    font-size: 32px;
-    margin: 0 0 12px 0;
+.chart-card:hover {
+    box-shadow: var(--dash-shadow-card-hover);
 }
 
-.placeholder-mini-text {
-    font-size: 15px;
+.chart-card-header {
+    margin-bottom: 20px;
+}
+
+.chart-card-header h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #222b3a;
+}
+
+.chart-card-header p {
+    font-size: 13px;
+    color: #8b93a3;
     margin: 0;
-    line-height: 1.5;
+}
+
+.chart-canvas-wrap {
+    position: relative;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-empty-text {
+    font-size: 14px;
+    color: #b0b6c2;
+}
+
+/* ===================== 최근 등록된 자산 목록 ===================== */
+.recent-section {
+    background-color: #ffffff;
+    border: 1px solid #e3e7ef;
+    border-radius: var(--dash-radius-lg);
+    padding: 28px;
+    box-shadow: var(--dash-shadow-card);
+}
+
+.recent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.recent-header h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: #222b3a;
+}
+
+.recent-more-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dash-color-total);
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+
+.recent-more-link:hover {
+    opacity: 0.7;
+}
+
+.recent-table-wrap {
+    overflow-x: auto;
+}
+
+.recent-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 720px;
+}
+
+.recent-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #8b93a3;
+    background-color: #f7f9fc;
+    border-bottom: 1px solid #e3e7ef;
+    white-space: nowrap;
+}
+
+.recent-table tbody td {
+    padding: 14px;
+    border-bottom: 1px solid #eef1f6;
+    color: #333c4d;
+    white-space: nowrap;
+}
+
+.recent-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.recent-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.recent-table tbody tr:hover {
+    background-color: #f9fafc;
+}
+
+.recent-status-chip {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+
+.chip-normal {
+    background-color: var(--dash-color-normal-bg);
+    color: var(--dash-color-normal);
+}
+
+.chip-repair {
+    background-color: var(--dash-color-repair-bg);
+    color: var(--dash-color-repair);
+}
+
+.chip-disposed {
+    background-color: var(--dash-color-disposed-bg);
+    color: var(--dash-color-disposed);
+}
+
+.recent-empty-text {
+    font-size: 14px;
+    color: #b0b6c2;
+    text-align: center;
+    padding: 40px 0;
 }
 
 /* ===================== 반응형 ===================== */
@@ -259,7 +390,7 @@
     .stat-card-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .placeholder-section {
+    .chart-grid {
         grid-template-columns: 1fr;
     }
 }

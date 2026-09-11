@@ -83,15 +83,77 @@
 
     </section>
 
-    <!-- 다음 단계 안내 (플레이스홀더) -->
-    <section class="placeholder-section fade-up">
-        <div class="placeholder-mini-box">
-            <p class="placeholder-mini-icon">📊</p>
-            <p class="placeholder-mini-text">부서별 · 상태별 통계 그래프는 다음 단계에서 추가될 예정입니다.</p>
+    <!-- 그래프 영역 -->
+    <section class="chart-grid fade-up">
+
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <h2>부서별 자산 현황</h2>
+                <p>부서에 현재 배정된 자산 건수</p>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="departmentChart" th:if="${not #lists.isEmpty(departmentLabels)}"></canvas>
+                <p class="chart-empty-text" th:if="${#lists.isEmpty(departmentLabels)}">
+                    아직 부서에 배정된 자산이 없습니다.
+                </p>
+            </div>
         </div>
-        <div class="placeholder-mini-box">
-            <p class="placeholder-mini-icon">📋</p>
-            <p class="placeholder-mini-text">최근 등록/변경된 자산 목록 테이블은 다음 단계에서 추가될 예정입니다.</p>
+
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <h2>상태별 자산 비율</h2>
+                <p>정상 · 수리중 · 폐기 비율</p>
+            </div>
+            <div class="chart-canvas-wrap">
+                <canvas id="statusChart" th:if="${totalCount > 0}"></canvas>
+                <p class="chart-empty-text" th:if="${totalCount == 0}">
+                    등록된 자산이 없습니다.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- 최근 등록된 자산 목록 -->
+    <section class="recent-section fade-up">
+        <div class="recent-header">
+            <h2>최근 등록된 자산</h2>
+            <a th:href="@{/assets}" class="recent-more-link">전체 목록 보기 →</a>
+        </div>
+
+        <div class="recent-table-wrap">
+            <table class="recent-table" th:if="${not #lists.isEmpty(recentAssets)}">
+                <thead>
+                <tr>
+                    <th>자산관리번호</th>
+                    <th>자산명</th>
+                    <th>유형</th>
+                    <th>상태</th>
+                    <th>담당자</th>
+                    <th>부서</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="asset : ${recentAssets}">
+                    <td th:text="${asset.assetCode}"></td>
+                    <td th:text="${asset.assetName}"></td>
+                    <td th:text="${asset.assetType}"></td>
+                    <td>
+                        <span class="recent-status-chip"
+                              th:classappend="${asset.status == '정상'} ? 'chip-normal' : (${asset.status == '수리중'} ? 'chip-repair' : 'chip-disposed')"
+                              th:text="${asset.status}"></span>
+                    </td>
+                    <td th:text="${asset.currentStaff != null} ? ${asset.currentStaff.name} : '미배정'"></td>
+                    <td th:text="${asset.currentStaff != null} ? ${asset.currentStaff.department} : '-'"></td>
+                    <td th:text="${#temporals.format(asset.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p class="recent-empty-text" th:if="${#lists.isEmpty(recentAssets)}">
+                등록된 자산이 없습니다.
+            </p>
         </div>
     </section>
 
@@ -121,6 +183,19 @@
         </div>
     </div>
 </div>
+
+<!-- 그래프 데이터: 서버에서 전달받은 값을 JS 전역 변수로 주입 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const departmentLabels = /*[[${departmentLabels}]]*/ [];
+    const departmentCounts = /*[[${departmentCounts}]]*/ [];
+    const statusLabels = /*[[${statusLabels}]]*/ [];
+    const statusCounts = /*[[${statusCounts}]]*/ [];
+    /*]]>*/
+</script>
+
+<!-- Chart.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 
 <script th:src="@{/js/dashboard/dashboard.js}"></script>
 </body>

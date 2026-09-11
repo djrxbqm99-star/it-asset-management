@@ -36,6 +36,23 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<String> findDistinctDepartments();
 
     /**
+     * 대시보드 부서별 자산 수 그래프용 - 부서별 자산 건수 집계
+     * 결과 Object[] : [0]=department(String), [1]=count(Long)
+     * 건수 많은 부서 순으로 정렬
+     */
+    @Query("SELECT a.currentStaff.department, COUNT(a) FROM Asset a " +
+            "WHERE a.currentStaff.department IS NOT NULL " +
+            "GROUP BY a.currentStaff.department " +
+            "ORDER BY COUNT(a) DESC")
+    List<Object[]> countAssetsByDepartment();
+
+    /**
+     * 대시보드 하단 "최근 등록된 자산" 테이블용 - 등록일(createdAt) 기준 최신 10건
+     * 주의: asset 테이블에 updated_at 컬럼이 없어 "변경"이 아닌 "등록" 기준입니다.
+     */
+    List<Asset> findTop10ByOrderByCreatedAtDesc();
+
+    /**
      * 자산 목록 통합 검색 (부서 / 상태 / 검색어 조합, 페이지네이션 포함)
      * 파라미터가 null이면 해당 조건은 무시됨
      */
