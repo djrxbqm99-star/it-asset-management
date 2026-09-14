@@ -28,14 +28,18 @@
 
     <div class="page-title-area fade-up">
         <h1>대시보드</h1>
-        <p>전체 자산 현황을 한눈에 확인하세요</p>
+        <p>전체 자산 현황을 한눈에 확인하세요 · 카드를 클릭하면 상세 목록을 볼 수 있어요</p>
     </div>
 
-    <!-- 통계 카드 영역 -->
+    <!-- 자산 수정/인수인계/상태변경 처리 후 뜨는 성공/실패 플래시 메시지 -->
+    <div class="assets-msg assets-msg-success fade-up" th:if="${registerSuccess}" th:text="${registerSuccess}"></div>
+    <div class="assets-msg assets-msg-error fade-up" th:if="${registerError}" th:text="${registerError}"></div>
+
+    <!-- 통계 카드 영역 (클릭 시 상태별 자산 목록 모달) -->
     <section class="stat-card-grid fade-up">
 
         <!-- 전체 자산 -->
-        <div class="stat-card stat-total">
+        <button type="button" class="stat-card stat-total" data-status="ALL" data-status-label="전체 자산" data-status-icon="📦">
             <div class="stat-icon-wrap">
                 <span class="stat-icon">📦</span>
             </div>
@@ -43,10 +47,10 @@
                 <p class="stat-label">전체 자산</p>
                 <p class="stat-value" th:text="${totalCount} + ' 건'">0 건</p>
             </div>
-        </div>
+        </button>
 
         <!-- 정상 -->
-        <div class="stat-card stat-normal">
+        <button type="button" class="stat-card stat-normal" data-status="정상" data-status-label="정상 자산" data-status-icon="✅">
             <div class="stat-icon-wrap">
                 <span class="stat-icon">✅</span>
             </div>
@@ -55,10 +59,10 @@
                 <p class="stat-value" th:text="${normalCount} + ' 건'">0 건</p>
             </div>
             <span class="stat-badge badge-normal">NORMAL</span>
-        </div>
+        </button>
 
         <!-- 수리중 -->
-        <div class="stat-card stat-repair">
+        <button type="button" class="stat-card stat-repair" data-status="수리중" data-status-label="수리중 자산" data-status-icon="🛠️">
             <div class="stat-icon-wrap">
                 <span class="stat-icon">🛠️</span>
             </div>
@@ -67,10 +71,10 @@
                 <p class="stat-value" th:text="${repairCount} + ' 건'">0 건</p>
             </div>
             <span class="stat-badge badge-repair">REPAIR</span>
-        </div>
+        </button>
 
         <!-- 폐기 -->
-        <div class="stat-card stat-disposed">
+        <button type="button" class="stat-card stat-disposed" data-status="폐기" data-status-label="폐기 자산" data-status-icon="🗑️">
             <div class="stat-icon-wrap">
                 <span class="stat-icon">🗑️</span>
             </div>
@@ -79,7 +83,7 @@
                 <p class="stat-value" th:text="${disposedCount} + ' 건'">0 건</p>
             </div>
             <span class="stat-badge badge-disposed">DISPOSED</span>
-        </div>
+        </button>
 
     </section>
 
@@ -122,7 +126,7 @@
         </div>
 
         <div class="recent-table-wrap">
-            <table class="recent-table" th:if="${not #lists.isEmpty(recentAssets)}">
+            <table class="recent-table" id="recentTable" th:if="${not #lists.isEmpty(recentAssets)}">
                 <thead>
                 <tr>
                     <th>자산관리번호</th>
@@ -135,7 +139,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="asset : ${recentAssets}">
+                <tr th:each="asset : ${recentAssets}"
+                    class="recent-row"
+                    th:attr="data-asset-id=${asset.assetId}"
+                    onclick="openDetailModal(this.dataset.assetId)">
                     <td th:text="${asset.assetCode}"></td>
                     <td th:text="${asset.assetName}"></td>
                     <td th:text="${asset.assetType}"></td>
@@ -154,6 +161,9 @@
             <p class="recent-empty-text" th:if="${#lists.isEmpty(recentAssets)}">
                 등록된 자산이 없습니다.
             </p>
+
+            <!-- 최근 자산 목록 클라이언트 사이드 페이지네이션 (5건씩) -->
+            <div class="recent-pagination" id="recentPagination" th:if="${not #lists.isEmpty(recentAssets)}"></div>
         </div>
     </section>
 
@@ -184,6 +194,257 @@
     </div>
 </div>
 
+<!-- 통계 카드 클릭 시 뜨는 "상태별 자산 목록" 모달 -->
+<div class="modal-overlay" id="statusListModal">
+    <div class="modal-box status-list-modal-box">
+        <button class="modal-close-btn" id="statusListCloseBtn">✕</button>
+
+        <div class="status-list-header">
+            <div class="status-list-icon" id="statusListIcon">📦</div>
+            <div>
+                <h2 id="statusListTitle">전체 자산</h2>
+                <p id="statusListSubtitle">0건의 자산이 있습니다</p>
+            </div>
+        </div>
+
+        <div class="status-list-body">
+            <div class="status-list-loading" id="statusListLoading">불러오는 중...</div>
+
+            <table class="status-list-table" id="statusListTable" style="display:none;">
+                <thead>
+                <tr>
+                    <th>관리번호</th>
+                    <th>자산명</th>
+                    <th>유형</th>
+                    <th>담당자</th>
+                    <th>부서</th>
+                </tr>
+                </thead>
+                <tbody id="statusListTbody"></tbody>
+            </table>
+
+            <p class="status-list-empty" id="statusListEmpty" style="display:none;">해당하는 자산이 없습니다.</p>
+        </div>
+
+        <div class="status-list-pagination" id="statusListPagination"></div>
+    </div>
+</div>
+
+<!-- 자산 상세 모달 (AJAX로 내용 채움, 자산 목록 화면과 완전히 동일한 구조 재사용) -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-box detail-modal-box" id="detailModalContent">
+        <!-- /assets/{id}/detail 응답으로 채워짐 -->
+    </div>
+</div>
+
+<!-- ============ 자산 수정 모달 (자산 목록 화면과 완전히 동일한 구조 재사용) ============ -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-box register-modal-box">
+        <button class="modal-close-btn" id="editCloseBtn">✕</button>
+
+        <div class="search-modal-header">
+            <div class="search-modal-icon">✏️</div>
+            <h2>자산 정보 수정</h2>
+            <p>기본 정보만 수정할 수 있어요. 담당자를 바꾸려면 상세보기의 "🔄 인수인계",<br>상태를 바꾸려면 "🔧 상태 변경" 버튼을 이용해 주세요.</p>
+        </div>
+
+        <form method="post" class="search-form" id="editForm">
+
+            <div class="input-group">
+                <label for="editAssetCode">자산관리번호</label>
+                <input type="text" id="editAssetCode" name="assetCode" required autocomplete="off"/>
+                <p class="field-hint" id="editAssetCodeHint"></p>
+            </div>
+
+            <div class="input-group">
+                <label for="editAssetName">자산명</label>
+                <input type="text" id="editAssetName" name="assetName" required autocomplete="off"/>
+            </div>
+
+            <div class="search-form-row">
+                <div class="input-group">
+                    <label>종류</label>
+                    <input type="hidden" id="editAssetTypeValue" name="assetType" required/>
+                    <button type="button" class="picker-btn"
+                            data-picker="typePickerModal"
+                            data-target-input="editAssetTypeValue"
+                            data-target-display="editAssetTypeDisplay">
+                        <span id="editAssetTypeDisplay">종류를 선택하세요</span>
+                        <span class="picker-arrow">▾</span>
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <label>구매일자</label>
+                    <input type="hidden" id="editPurchaseDateValue" name="purchaseDate"/>
+                    <button type="button" class="picker-btn date-picker-btn" id="editDatePickerBtn"
+                            data-target-input="editPurchaseDateValue" data-target-display="editPurchaseDateDisplay">
+                        <span id="editPurchaseDateDisplay">날짜를 선택하세요</span>
+                        <span class="picker-arrow">📅</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-modal-actions">
+                <button type="button" class="btn btn-outline" id="editCancelBtn">취소</button>
+                <button type="submit" class="btn btn-primary">수정하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ 인수인계 모달 ============ -->
+<div class="modal-overlay" id="handoverModal">
+    <div class="modal-box register-modal-box">
+        <button class="modal-close-btn" id="handoverCloseBtn">✕</button>
+
+        <div class="search-modal-header">
+            <div class="search-modal-icon">🔄</div>
+            <h2>담당자 인수인계</h2>
+            <p>새로운 담당자와 인수인계 사유를 남겨주세요</p>
+        </div>
+
+        <form method="post" class="search-form" id="handoverForm">
+
+            <div class="input-group">
+                <label>현재 담당자</label>
+                <p class="handover-current-staff" id="handoverCurrentStaff">담당자 없음</p>
+            </div>
+
+            <div class="input-group">
+                <label>새 담당자</label>
+                <input type="hidden" id="handoverStaffIdValue" name="newStaffId"/>
+                <button type="button" class="picker-btn"
+                        data-picker="staffPickerModal"
+                        data-target-input="handoverStaffIdValue"
+                        data-target-display="handoverStaffDisplay">
+                    <span id="handoverStaffDisplay">담당자를 선택하세요</span>
+                    <span class="picker-arrow">▾</span>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label for="handoverReason">인수인계 사유 <span class="optional">(선택)</span></label>
+                <input type="text" id="handoverReason" name="reason" placeholder="예: 부서 이동, 퇴사, 타부서 지원" autocomplete="off"/>
+            </div>
+
+            <div class="search-modal-actions">
+                <button type="button" class="btn btn-outline" id="handoverCancelBtn">취소</button>
+                <button type="submit" class="btn btn-primary">인수인계하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ 상태 변경 모달 ============ -->
+<div class="modal-overlay" id="statusChangeModal">
+    <div class="modal-box register-modal-box">
+        <button class="modal-close-btn" id="statusChangeCloseBtn">✕</button>
+
+        <div class="search-modal-header">
+            <div class="search-modal-icon">🔧</div>
+            <h2>상태 변경</h2>
+            <p>자산 상태를 변경하고 사유를 남겨보세요</p>
+        </div>
+
+        <form method="post" class="search-form" id="statusChangeForm">
+
+            <div class="input-group">
+                <label>변경할 상태</label>
+                <input type="hidden" id="statusChangeValue" name="newStatus" value="정상"/>
+                <button type="button" class="picker-btn"
+                        data-picker="registerStatusPickerModal"
+                        data-target-input="statusChangeValue"
+                        data-target-display="statusChangeDisplay">
+                    <span id="statusChangeDisplay">정상</span>
+                    <span class="picker-arrow">▾</span>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label for="statusChangeReason">사유 <span class="optional">(선택)</span></label>
+                <input type="text" id="statusChangeReason" name="reason" placeholder="예: 액정 파손으로 수리 요청" autocomplete="off"/>
+            </div>
+
+            <div class="input-group">
+                <label for="statusChangeAction">조치 내용 <span class="optional">(수리 완료 시 입력하면 유지보수 이력에 남습니다)</span></label>
+                <input type="text" id="statusChangeAction" name="actionContent" placeholder="예: 액정 패널 교체 완료" autocomplete="off"/>
+            </div>
+
+            <div class="search-modal-actions">
+                <button type="button" class="btn btn-outline" id="statusChangeCancelBtn">취소</button>
+                <button type="submit" class="btn btn-primary">변경하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============ 선택 모달들 (종류 / 상태 / 담당자 / 날짜) - 자산 목록 화면과 동일 ============ -->
+
+<div class="modal-overlay" id="typePickerModal">
+    <div class="modal-box picker-modal-box">
+        <button class="modal-close-btn" onclick="document.getElementById('typePickerModal').classList.remove('open')">✕</button>
+        <h2 class="picker-modal-title">종류 선택</h2>
+        <ul class="picker-list">
+            <li data-value="PC">💻 PC</li>
+            <li data-value="모니터">🖥️ 모니터</li>
+            <li data-value="서버">🗄️ 서버</li>
+            <li data-value="네트워크">🌐 네트워크</li>
+            <li data-value="프린터">🖨️ 프린터</li>
+            <li data-value="기타">➕ 기타</li>
+        </ul>
+    </div>
+</div>
+
+<div class="modal-overlay" id="registerStatusPickerModal">
+    <div class="modal-box picker-modal-box">
+        <button class="modal-close-btn" onclick="document.getElementById('registerStatusPickerModal').classList.remove('open')">✕</button>
+        <h2 class="picker-modal-title">상태 선택</h2>
+        <ul class="picker-list">
+            <li data-value="정상">✅ 정상</li>
+            <li data-value="수리중">🛠️ 수리중</li>
+            <li data-value="폐기">🗑️ 폐기</li>
+        </ul>
+    </div>
+</div>
+
+<div class="modal-overlay" id="staffPickerModal">
+    <div class="modal-box picker-modal-box staff-picker-modal-box">
+        <button class="modal-close-btn" onclick="document.getElementById('staffPickerModal').classList.remove('open')">✕</button>
+        <h2 class="picker-modal-title">담당자 선택</h2>
+
+        <input type="text" class="picker-search-input" id="staffPickerSearch" placeholder="이름으로 검색" autocomplete="off"/>
+
+        <div class="picker-dept-chips" id="staffPickerDeptChips">
+            <button type="button" class="picker-dept-chip active" data-dept="">전체</button>
+            <button type="button" class="picker-dept-chip" th:each="dept : ${departments}" th:attr="data-dept=${dept}" th:text="${dept}"></button>
+        </div>
+
+        <ul class="picker-list" id="staffPickerList">
+            <li data-value="" data-department="" data-name="">담당자 없음</li>
+            <li th:each="s : ${staffList}"
+                th:attr="data-value=${s.staffId}, data-department=${s.department}, data-name=${s.name}"
+                th:text="${s.name + ' (' + (s.department ?: '소속 미지정') + ')'}"></li>
+        </ul>
+    </div>
+</div>
+
+<!-- 구매일자 캘린더 선택 모달 -->
+<div class="modal-overlay" id="datePickerModal">
+    <div class="modal-box calendar-modal-box">
+        <button class="modal-close-btn" onclick="document.getElementById('datePickerModal').classList.remove('open')">✕</button>
+        <div class="calendar-header">
+            <button type="button" id="calPrevBtn" class="calendar-nav-btn">‹</button>
+            <span id="calMonthLabel" class="calendar-month-label"></span>
+            <button type="button" id="calNextBtn" class="calendar-nav-btn">›</button>
+        </div>
+        <div class="calendar-weekdays">
+            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+    </div>
+</div>
+
 <!-- 그래프 데이터: 서버에서 전달받은 값을 JS 전역 변수로 주입 -->
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -194,8 +455,8 @@
     /*]]>*/
 </script>
 
-<!-- Chart.js CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<!-- Chart.js: CDN 대신 프로젝트에 내장된 로컬 파일 사용 (사내망/교육망 CDN 차단 이슈 방지) -->
+<script th:src="@{/js/vendor/chart.umd.min.js}"></script>
 
 <script th:src="@{/js/dashboard/dashboard.js}"></script>
 </body>

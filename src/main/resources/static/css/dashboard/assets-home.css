@@ -1100,3 +1100,28 @@
         max-height: none !important;
     }
 }
+/* ---------- 상세 모달: 이력이 없을 때 여백을 줄여서 모달이 늘어져 보이지 않도록 ---------- */
+.timeline-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    padding: 8px 0;
+}
+
+.timeline.timeline-empty-state {
+    margin-bottom: 12px;
+}
+
+.history-list.history-list-empty-state {
+    margin-bottom: 12px;
+}
+
+.history-lock-note {
+    padding: 8px 12px;
+    margin: 8px 0 14px;
+}
+
+.detail-modal-actions .btn {
+    height: 42px;
+    font-size: 13.5px;
+}

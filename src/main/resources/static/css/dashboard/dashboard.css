@@ -8,9 +8,11 @@
      그대로 사용합니다. 이 파일에서는 절대 재정의하지 않습니다.
 
    ※ 이 파일은 오직 대시보드 화면 고유 요소만 다룹니다:
-     - 통계 카드 4개
+     - 통계 카드 4개 (클릭 가능한 button)
      - 부서별/상태별 그래프 카드 2개
-     - 최근 등록된 자산 목록 테이블
+     - 최근 등록된 자산 목록 테이블 + 페이지네이션
+     - 통계 카드 클릭 시 뜨는 "상태별 자산 목록" 모달
+     - 자산 상세 모달 (assets-home.css의 detail-modal-box와 동일하게 유지)
    ========================================================= */
 
 :root {
@@ -133,7 +135,7 @@
     margin: 0;
 }
 
-/* ===================== 통계 카드 ===================== */
+/* ===================== 통계 카드 (클릭 가능한 button) ===================== */
 .stat-card-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -153,6 +155,11 @@
     box-shadow: var(--dash-shadow-card);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
+    /* button 리셋 (통계 카드를 클릭 가능한 버튼으로 사용) */
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
 }
 
 .stat-card::before {
@@ -167,6 +174,15 @@
 .stat-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--dash-shadow-card-hover);
+}
+
+.stat-card:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.stat-card:focus-visible {
+    outline: 2px solid var(--dash-color-total);
+    outline-offset: 2px;
 }
 
 .stat-icon-wrap {
@@ -347,12 +363,17 @@
     border-bottom: none;
 }
 
-.recent-table tbody tr {
+.recent-row {
     transition: background-color 0.15s ease;
+    cursor: pointer;
 }
 
-.recent-table tbody tr:hover {
+.recent-row:hover {
     background-color: #f9fafc;
+}
+
+.recent-row.recent-row-hidden {
+    display: none;
 }
 
 .recent-status-chip {
@@ -385,6 +406,410 @@
     padding: 40px 0;
 }
 
+/* 최근 자산 목록 클라이언트 페이지네이션 */
+.recent-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.recent-pagination .page-link {
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid #e3e7ef;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7688;
+    background: #fff;
+    cursor: pointer;
+    transition: var(--transition, 0.15s ease);
+}
+
+.recent-pagination .page-link:hover {
+    border-color: var(--dash-color-total);
+    color: var(--dash-color-total);
+}
+
+.recent-pagination .page-link.page-active {
+    background: var(--dash-color-total);
+    border-color: var(--dash-color-total);
+    color: #fff;
+}
+
+.recent-pagination .page-link:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ===================== 통계 카드 클릭 → "상태별 자산 목록" 모달 ===================== */
+.status-list-modal-box {
+    width: 620px;
+    max-width: 92vw;
+    padding: 40px 36px;
+    position: relative;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.status-list-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-right: 30px;
+}
+
+.status-list-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background-color: var(--dash-color-total-bg);
+}
+
+.status-list-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    color: #222b3a;
+}
+
+.status-list-header p {
+    font-size: 13.5px;
+    color: #8b93a3;
+    margin: 0;
+}
+
+.status-list-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 120px;
+}
+
+.status-list-loading {
+    text-align: center;
+    padding: 60px 0;
+    color: #b0b6c2;
+    font-size: 14px;
+}
+
+.status-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.status-list-table thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #8b93a3;
+    background-color: #f7f9fc;
+    border-bottom: 1px solid #e3e7ef;
+    position: sticky;
+    top: 0;
+}
+
+.status-list-table tbody td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #eef1f6;
+    color: #333c4d;
+}
+
+.status-list-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.status-list-table tbody tr:hover {
+    background-color: #f4f7ff;
+}
+
+.status-list-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.status-list-empty {
+    text-align: center;
+    padding: 50px 0;
+    color: #b0b6c2;
+    font-size: 14px;
+}
+
+.status-list-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-shrink: 0;
+}
+
+.status-list-pagination .page-link {
+    min-width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #e3e7ef;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #6b7688;
+    background: #fff;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.status-list-pagination .page-link:hover {
+    border-color: var(--dash-color-total);
+    color: var(--dash-color-total);
+}
+
+.status-list-pagination .page-link.page-active {
+    background: var(--dash-color-total);
+    border-color: var(--dash-color-total);
+    color: #fff;
+}
+
+.status-list-pagination .page-link:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ---------- 자산 상세 모달 (assets-home.css와 완전히 동일하게 유지) ---------- */
+.detail-modal-box {
+    width: 480px;
+    max-width: 90vw;
+    padding: 40px 36px;
+    position: relative;
+}
+
+.detail-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-right: 30px;
+}
+
+.detail-modal-header h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.detail-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    margin-bottom: 28px;
+}
+
+.detail-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.detail-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 16px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.status-badge.badge-normal {
+    background: #e7f7ee;
+    color: #2e9e5b;
+}
+
+.status-badge.badge-repair {
+    background: #fdf1e0;
+    color: #e08a1e;
+}
+
+.status-badge.badge-disposed {
+    background: #eceef1;
+    color: #6b7280;
+}
+
+/* 인수인계 타임라인 */
+.timeline {
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 28px;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-border);
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.timeline-dot.dot-current {
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.timeline-top strong {
+    font-size: 15px;
+}
+
+.timeline-current-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-accent);
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.timeline-period {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+}
+
+.timeline-reason {
+    font-size: 13.5px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+}
+
+.timeline-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 14px;
+    padding: 20px 0;
+}
+
+.detail-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.detail-modal-actions .btn {
+    flex: 1;
+    min-width: 100px;
+    height: 46px;
+}
+
+/* 상태변경 이력 / 유지보수 이력 리스트 */
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 24px;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item-icon {
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.history-item-body {
+    flex: 1;
+}
+
+.history-item-top {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    margin-bottom: 4px;
+}
+
+.history-item-reason {
+    font-size: 13.5px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+}
+
 /* ===================== 반응형 ===================== */
 @media (max-width: 1080px) {
     .stat-card-grid {
@@ -399,4 +824,388 @@
     .stat-card-grid {
         grid-template-columns: 1fr;
     }
+    .status-list-modal-box {
+        padding: 28px 20px;
+    }
+}
+
+/* =========================================================
+   4단계(B안) 추가: 자산 상세 모달에서 수정/인수인계/상태변경까지
+   그대로 처리하기 위해 assets-home.css의 관련 스타일을 동일하게 가져옴
+   ========================================================= */
+
+/* ---------- 처리 결과 플래시 메시지 (수정/인수인계/상태변경 성공·실패) ---------- */
+.assets-msg {
+    max-width: 1200px;
+    margin: 0 auto 16px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+.assets-msg-success {
+    background: #e7f7ee;
+    color: #2e9e5b;
+}
+
+.assets-msg-error {
+    background: #fdeaea;
+    color: var(--color-danger);
+}
+
+/* ---------- 수정/인수인계/상태변경 모달 공통 박스 ---------- */
+.register-modal-box {
+    width: 460px;
+    max-width: 90vw;
+    padding: 40px 36px;
+}
+
+.search-modal-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.search-modal-icon {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.search-modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.search-modal-header p {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.search-form .input-group {
+    margin-bottom: 18px;
+}
+
+.search-form label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 6px;
+}
+
+.search-form input[type="text"],
+.search-form select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    font-size: 15px;
+    font-family: inherit;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--color-text);
+    transition: var(--transition);
+}
+
+.search-form input[type="text"]:focus,
+.search-form select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.search-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.search-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.search-modal-actions .btn {
+    flex: 1;
+    height: 46px;
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+/* ---------- 선택 모달 트리거 버튼 (종류/상태/담당자 공통) ---------- */
+.picker-btn {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    font-size: 15px;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.picker-btn:hover {
+    border-color: var(--color-primary);
+}
+
+.picker-arrow {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+/* ---------- 선택 리스트 모달 (종류/상태/담당자) ---------- */
+.picker-modal-box {
+    width: 320px;
+    max-width: 88vw;
+    padding: 32px 28px;
+    max-height: 70vh;
+}
+
+.picker-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-right: 24px;
+}
+
+.picker-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.picker-list li {
+    padding: 14px 12px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.picker-list li:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+/* ---------- 담당자 선택 모달 - 검색창 / 부서 칩 ---------- */
+.staff-picker-modal-box {
+    width: 340px;
+}
+
+.picker-search-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 14.5px;
+    font-family: inherit;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    transition: var(--transition);
+}
+
+.picker-search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.picker-dept-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.picker-dept-chip {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.picker-dept-chip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.picker-dept-chip.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.picker-list .picker-empty-msg {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13.5px;
+    padding: 24px 0;
+}
+
+/* ---------- 자산관리번호 실시간 중복체크 힌트 ---------- */
+.field-hint {
+    font-size: 12.5px;
+    margin: 6px 2px 0;
+    min-height: 16px;
+}
+
+.field-hint-ok {
+    color: #2e9e5b;
+}
+
+.field-hint-error {
+    color: var(--color-danger);
+}
+
+/* ---------- 인수인계 모달 - 현재 담당자 표시 ---------- */
+.handover-current-staff {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 0;
+}
+
+/* ---------- 구매일자 캘린더 선택 모달 ---------- */
+.calendar-modal-box {
+    width: 320px;
+    max-width: 88vw;
+    padding: 32px 28px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.calendar-month-label {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.calendar-nav-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--color-bg);
+    border-radius: 50%;
+    font-size: 16px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.calendar-nav-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 6px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendar-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    font-size: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.calendar-day:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.calendar-day-empty {
+    cursor: default;
+    pointer-events: none;
+}
+
+.calendar-day-today {
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.calendar-day-selected {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 700;
+}
+
+.calendar-day-selected:hover {
+    background: var(--color-primary-dark);
+    color: #fff;
+}
+
+@media (max-width: 640px) {
+    .register-modal-box {
+        padding: 28px 20px;
+    }
+}
+
+/* ---------- 상세 모달: 이력이 없을 때 여백을 줄여서 모달이 늘어져 보이지 않도록 (assets-home.css와 동일) ---------- */
+.timeline-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    padding: 8px 0;
+}
+
+.timeline.timeline-empty-state {
+    margin-bottom: 12px;
+}
+
+.history-list.history-list-empty-state {
+    margin-bottom: 12px;
+}
+
+.history-lock-note {
+    padding: 8px 12px;
+    margin: 8px 0 14px;
+}
+
+.detail-modal-actions .btn {
+    height: 42px;
+    font-size: 13.5px;
 }

@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
@@ -38,7 +39,7 @@
     <h3 class="detail-section-title">담당자 인수인계 이력</h3>
     <p class="history-lock-note">🔒 이력은 새로 추가만 가능하며, 한번 기록되면 수정·삭제할 수 없어요. 잘못 인계했다면 다시 인수인계해서 바로잡아 주세요.</p>
 
-    <div class="timeline">
+    <div class="timeline" th:classappend="${historyList.isEmpty()} ? ' timeline-empty-state' : ''">
         <div class="timeline-item" th:each="h : ${historyList}">
             <div class="timeline-dot" th:classappend="${h.current} ? 'dot-current' : ''"></div>
             <div class="timeline-content">
@@ -54,12 +55,12 @@
             </div>
         </div>
 
-        <p class="timeline-empty" th:if="${historyList.isEmpty()}">등록된 인수인계 이력이 없습니다.</p>
+        <p class="timeline-empty" th:if="${historyList.isEmpty()}">📭 인수인계 이력이 없습니다.</p>
     </div>
 
     <h3 class="detail-section-title">상태 변경 이력</h3>
 
-    <div class="history-list">
+    <div class="history-list" th:classappend="${statusHistoryList.isEmpty()} ? ' history-list-empty-state' : ''">
         <div class="history-item" th:each="sh : ${statusHistoryList}">
             <span class="status-badge"
                   th:classappend="${sh.changedStatus == '정상'} ? 'badge-normal' : (${sh.changedStatus == '수리중'} ? 'badge-repair' : 'badge-disposed')"
@@ -72,12 +73,12 @@
                 <div class="history-item-reason" th:if="${sh.reason != null and !sh.reason.isEmpty()}" th:text="${sh.reason}"></div>
             </div>
         </div>
-        <p class="timeline-empty" th:if="${statusHistoryList.isEmpty()}">상태 변경 이력이 없습니다.</p>
+        <p class="timeline-empty" th:if="${statusHistoryList.isEmpty()}">📭 상태 변경 이력이 없습니다.</p>
     </div>
 
     <h3 class="detail-section-title">유지보수(조치) 이력</h3>
 
-    <div class="history-list">
+    <div class="history-list" th:classappend="${maintenanceHistoryList.isEmpty()} ? ' history-list-empty-state' : ''">
         <div class="history-item" th:each="m : ${maintenanceHistoryList}">
             <span class="history-item-icon">🛠️</span>
             <div class="history-item-body">
@@ -88,7 +89,7 @@
                 <div class="history-item-reason" th:text="${m.actionContent}"></div>
             </div>
         </div>
-        <p class="timeline-empty" th:if="${maintenanceHistoryList.isEmpty()}">유지보수 이력이 없습니다.</p>
+        <p class="timeline-empty" th:if="${maintenanceHistoryList.isEmpty()}">📭 유지보수 이력이 없습니다.</p>
     </div>
 
     <p class="history-lock-note" th:if="${canEdit}">

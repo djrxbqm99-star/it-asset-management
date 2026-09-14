@@ -77,6 +77,19 @@ public class AssetController {
     }
 
     /**
+     * 수정/인수인계/상태변경 처리 후 어디로 돌아갈지 결정
+     * - 자산 목록 화면(/assets)에서 요청했으면 자산 목록으로
+     * - 대시보드(/dashboard)에서 요청했으면 대시보드로
+     * - Referer를 알 수 없으면 기본값으로 자산 목록으로 이동
+     */
+    private String redirectAfterAction(String referer) {
+        if (referer != null && referer.contains("/dashboard")) {
+            return "redirect:/dashboard";
+        }
+        return "redirect:/assets";
+    }
+
+    /**
      * 자산 목록 화면
      */
     @GetMapping("/assets")
@@ -271,6 +284,7 @@ public class AssetController {
      * 자산 수정
      * - 본인이 등록한 자산이 아니면 거부
      * - 담당자가 바뀌면 기존 인수인계 이력을 종료(end_date)하고 새 이력을 시작
+     * - 대시보드에서 요청한 경우 대시보드로, 자산 목록에서 요청한 경우 자산 목록으로 되돌아감 (Referer 기준)
      */
     @PostMapping("/assets/{assetId}/edit")
     public String editAsset(
@@ -280,29 +294,30 @@ public class AssetController {
             @RequestParam String assetName,
             @RequestParam String assetType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate purchaseDate,
+            @RequestHeader(value = "Referer", required = false) String referer,
             RedirectAttributes redirectAttributes) {
 
         Asset asset = assetRepository.findById(assetId).orElse(null);
         if (asset == null) {
             redirectAttributes.addFlashAttribute("registerError", "존재하지 않는 자산입니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (!canEdit(asset, userDetails.getStaff())) {
             redirectAttributes.addFlashAttribute("registerError", "본인이 등록한 자산만 수정할 수 있습니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (assetCode == null || assetCode.isBlank() || assetName == null || assetName.isBlank()
                 || assetType == null || assetType.isBlank()) {
             redirectAttributes.addFlashAttribute("registerError", "자산관리번호, 자산명, 종류는 필수 입력입니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (assetRepository.existsByAssetCodeAndAssetIdNot(assetCode, assetId)) {
             redirectAttributes.addFlashAttribute("registerError",
                     "이미 존재하는 자산관리번호입니다: " + assetCode);
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         // 담당자 변경은 "인수인계", 상태 변경은 "상태 변경" 기능에서 각각 이력을 남기며 처리하므로
@@ -315,7 +330,7 @@ public class AssetController {
 
         redirectAttributes.addFlashAttribute("registerSuccess",
                 "'" + assetName + "' 자산 정보가 수정되었습니다.");
-        return "redirect:/assets";
+        return redirectAfterAction(referer);
     }
 
     /**
@@ -323,6 +338,7 @@ public class AssetController {
      * - 기존 담당자의 진행중이던 이력을 종료(end_date)하고, 새 담당자로 이력을 새로 시작
      * - 자산의 현재 담당자(current_staff_id)도 함께 갱신
      * - 본인이 등록한 자산이 아니면 거부
+     * - 대시보드에서 요청한 경우 대시보드로, 자산 목록에서 요청한 경우 자산 목록으로 되돌아감 (Referer 기준)
      */
     @PostMapping("/assets/{assetId}/handover")
     public String handoverAsset(
@@ -330,29 +346,30 @@ public class AssetController {
             @PathVariable Long assetId,
             @RequestParam String newStaffId,
             @RequestParam(required = false) String reason,
+            @RequestHeader(value = "Referer", required = false) String referer,
             RedirectAttributes redirectAttributes) {
 
         Asset asset = assetRepository.findById(assetId).orElse(null);
         if (asset == null) {
             redirectAttributes.addFlashAttribute("registerError", "존재하지 않는 자산입니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (!canEdit(asset, userDetails.getStaff())) {
             redirectAttributes.addFlashAttribute("registerError", "본인이 등록한 자산만 인수인계할 수 있습니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         Long normalizedNewStaffId = parseStaffId(newStaffId);
         if (normalizedNewStaffId == null) {
             redirectAttributes.addFlashAttribute("registerError", "인계받을 담당자를 선택해 주세요.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         Staff newStaff = staffRepository.findById(normalizedNewStaffId).orElse(null);
         if (newStaff == null) {
             redirectAttributes.addFlashAttribute("registerError", "존재하지 않는 담당자입니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         LocalDate today = LocalDate.now();
@@ -379,7 +396,7 @@ public class AssetController {
 
         redirectAttributes.addFlashAttribute("registerSuccess",
                 "'" + asset.getAssetName() + "' 담당자가 " + newStaff.getName() + " 님에게 인수인계되었습니다.");
-        return "redirect:/assets";
+        return redirectAfterAction(referer);
     }
 
     /**
@@ -387,6 +404,7 @@ public class AssetController {
      * - asset_status_history에 변경 이력 기록
      * - actionContent를 입력한 경우 maintenance_history에도 조치 내역 기록 (예: 수리 완료 처리 시)
      * - 본인이 등록한 자산이 아니면 거부
+     * - 대시보드에서 요청한 경우 대시보드로, 자산 목록에서 요청한 경우 자산 목록으로 되돌아감 (Referer 기준)
      */
     @PostMapping("/assets/{assetId}/status-change")
     public String changeStatus(
@@ -395,22 +413,23 @@ public class AssetController {
             @RequestParam String newStatus,
             @RequestParam(required = false) String reason,
             @RequestParam(required = false) String actionContent,
+            @RequestHeader(value = "Referer", required = false) String referer,
             RedirectAttributes redirectAttributes) {
 
         Asset asset = assetRepository.findById(assetId).orElse(null);
         if (asset == null) {
             redirectAttributes.addFlashAttribute("registerError", "존재하지 않는 자산입니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (!canEdit(asset, userDetails.getStaff())) {
             redirectAttributes.addFlashAttribute("registerError", "본인이 등록한 자산만 상태를 변경할 수 있습니다.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         if (newStatus == null || newStatus.isBlank()) {
             redirectAttributes.addFlashAttribute("registerError", "변경할 상태를 선택해 주세요.");
-            return "redirect:/assets";
+            return redirectAfterAction(referer);
         }
 
         Staff loginStaff = userDetails.getStaff();
@@ -437,7 +456,7 @@ public class AssetController {
 
         redirectAttributes.addFlashAttribute("registerSuccess",
                 "'" + asset.getAssetName() + "' 상태가 '" + newStatus + "'(으)로 변경되었습니다.");
-        return "redirect:/assets";
+        return redirectAfterAction(referer);
     }
 
     /**
