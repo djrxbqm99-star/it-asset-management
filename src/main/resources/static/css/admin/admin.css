@@ -1,0 +1,332 @@
+/* ============================================
+   admin.css - 회장님 전용 관리자 페이지 전용 스타일
+   경로: src/main/resources/static/css/admin/admin.css
+   주의: 이 파일은 /admin 화면에서만 로드되므로,
+        여기서 body 폰트 크기를 바꿔도 대시보드/자산목록 등
+        다른 화면에는 전혀 영향을 주지 않습니다.
+   ============================================ */
+
+:root {
+    --admin-bg: #F4F1EA;
+    --admin-surface: #FFFFFF;
+    --admin-primary: #6B5B45;
+    --admin-primary-dark: #4E4231;
+    --admin-accent: #8CA985;
+    --admin-text: #2E2A24;
+    --admin-text-muted: #7A7266;
+    --admin-border: #E4DED2;
+    --admin-normal: #4C9A6A;
+    --admin-repair: #D19A3D;
+    --admin-disposed: #B5615A;
+    --admin-radius: 18px;
+    --admin-shadow: 0 6px 20px rgba(60, 50, 30, 0.08);
+
+    /* 큰 글씨 모드 기준값 - JS가 body에 .big-font 클래스를 토글하면
+       아래 --admin-font-base 값만 바뀌고, 이 문서의 폰트 크기는
+       전부 rem 단위이므로 전체가 함께 커집니다. */
+    --admin-font-base: 16px;
+}
+
+#adminBody {
+    margin: 0;
+    background: var(--admin-bg);
+    font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+    color: var(--admin-text);
+    font-size: var(--admin-font-base);
+    line-height: 1.8;
+    transition: font-size 0.2s ease;
+}
+
+#adminBody.big-font {
+    --admin-font-base: 21px;
+}
+
+/* ---------- 관리자 전용 헤더 (기존 site-header와 완전히 별도 클래스) ---------- */
+.admin-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 2rem;
+    background: var(--admin-primary);
+    color: #fff;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.admin-header-icon {
+    font-size: 1.4rem;
+}
+
+.admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.admin-welcome {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.admin-fontsize-toggle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.admin-fontsize-toggle:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: scale(1.06);
+}
+
+.admin-fontsize-toggle.active {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+}
+
+.admin-logout-btn {
+    height: 3rem;
+    padding: 0 1.3rem;
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- 본문 레이아웃 ---------- */
+.admin-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+}
+
+.admin-page-title h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.9rem;
+    font-weight: 700;
+}
+
+.admin-page-title p {
+    margin: 0 0 2rem;
+    color: var(--admin-text-muted);
+    font-size: 1.05rem;
+}
+
+/* ---------- 통계 카드 ---------- */
+.admin-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.2rem;
+}
+
+.admin-stat-card {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    padding: 1.6rem 1.2rem;
+    text-align: center;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-stat-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.admin-stat-label {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--admin-text-muted);
+}
+
+.admin-stat-value {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.admin-stat-normal .admin-stat-value { color: var(--admin-normal); }
+.admin-stat-repair .admin-stat-value { color: var(--admin-repair); }
+.admin-stat-disposed .admin-stat-value { color: var(--admin-disposed); }
+
+/* ---------- 그래프 ---------- */
+.admin-chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem;
+    margin-bottom: 2.6rem;
+}
+
+.admin-chart-card {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    padding: 1.6rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-chart-header h2 {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+}
+
+.admin-chart-header p {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: var(--admin-text-muted);
+}
+
+.admin-chart-canvas-wrap {
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-chart-empty-text {
+    color: var(--admin-text-muted);
+    font-size: 0.95rem;
+}
+
+/* ---------- 목록 섹션 ---------- */
+.admin-table-section {
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius);
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--admin-border);
+}
+
+.admin-section-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.admin-section-count {
+    font-size: 1rem;
+    color: var(--admin-text-muted);
+}
+
+.admin-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 0.9rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--admin-border);
+    white-space: nowrap;
+}
+
+.admin-table th {
+    color: var(--admin-text-muted);
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.admin-table tbody tr:hover {
+    background: #FBF9F5;
+}
+
+.admin-table-empty {
+    padding: 1.6rem 0;
+    text-align: center;
+    color: var(--admin-text-muted);
+}
+
+/* 권한/상태 칩 */
+.admin-role-chip,
+.admin-status-chip {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.role-admin { background: #F0E6D2; color: var(--admin-primary-dark); }
+.role-user { background: #EEF1EC; color: var(--admin-text-muted); }
+
+.chip-normal { background: #E4F4E9; color: var(--admin-normal); }
+.chip-repair { background: #FBEFDC; color: var(--admin-repair); }
+.chip-disposed { background: #F7E6E5; color: var(--admin-disposed); }
+
+/* ---------- 페이지네이션 ---------- */
+.admin-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.4rem;
+}
+
+.admin-page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.admin-page-link:hover {
+    background: var(--admin-border);
+}
+
+.admin-page-link.active {
+    background: var(--admin-primary);
+    color: #fff;
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 960px) {
+    .admin-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .admin-chart-grid { grid-template-columns: 1fr; }
+}

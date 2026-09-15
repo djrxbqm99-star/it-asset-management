@@ -32,6 +32,10 @@ public class SecurityConfig {
                                 "/api/check-username",
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
+                        // 관리자(회장님) 전용 페이지 - ROLE_ADMIN 권한 보유자만 접근 가능
+                        // (위의 "/css/**", "/js/**" permitAll에 정적 리소스는 이미 포함되므로
+                        //  admin 전용 css/js 파일도 별도 규칙 없이 그대로 접근 가능함)
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 나머지는 로그인 필요
                         .anyRequest().authenticated()
                 )

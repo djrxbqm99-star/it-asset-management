@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - IT 자산관리 시스템</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/admin.css}">
+</head>
+<body id="adminBody">
+
+<!-- 관리자 페이지 전용 헤더 (기존 site-header와 완전히 별도) -->
+<header class="admin-header">
+    <div class="admin-header-title">
+        <span class="admin-header-icon">🏢</span>
+        <span>IT 자산관리 시스템 · 관리자 페이지</span>
+    </div>
+    <div class="admin-header-actions">
+        <span class="admin-welcome" th:if="${loginName}" th:text="${loginName} + '님, 안녕하세요'"></span>
+        <button type="button" class="admin-fontsize-toggle" id="fontToggleBtn" title="큰 글씨 모드">🔍</button>
+        <button type="button" class="admin-logout-btn" id="logoutOpenBtn">로그아웃</button>
+    </div>
+</header>
+
+<main class="admin-wrap">
+
+    <div class="admin-page-title fade-up">
+        <h1>전체 현황판</h1>
+        <p>회사 전체 직원과 자산 현황을 한눈에 확인하실 수 있습니다. (조회 전용 화면입니다)</p>
+    </div>
+
+    <!-- 통계 카드 -->
+    <section class="admin-stat-grid fade-up">
+        <div class="admin-stat-card">
+            <span class="admin-stat-icon">👥</span>
+            <p class="admin-stat-label">전체 직원</p>
+            <p class="admin-stat-value" th:text="${totalStaffCount} + ' 명'">0 명</p>
+        </div>
+        <div class="admin-stat-card">
+            <span class="admin-stat-icon">📦</span>
+            <p class="admin-stat-label">전체 자산</p>
+            <p class="admin-stat-value" th:text="${totalCount} + ' 건'">0 건</p>
+        </div>
+        <div class="admin-stat-card admin-stat-normal">
+            <span class="admin-stat-icon">✅</span>
+            <p class="admin-stat-label">정상</p>
+            <p class="admin-stat-value" th:text="${normalCount} + ' 건'">0 건</p>
+        </div>
+        <div class="admin-stat-card admin-stat-repair">
+            <span class="admin-stat-icon">🛠️</span>
+            <p class="admin-stat-label">수리중</p>
+            <p class="admin-stat-value" th:text="${repairCount} + ' 건'">0 건</p>
+        </div>
+        <div class="admin-stat-card admin-stat-disposed">
+            <span class="admin-stat-icon">🗑️</span>
+            <p class="admin-stat-label">폐기</p>
+            <p class="admin-stat-value" th:text="${disposedCount} + ' 건'">0 건</p>
+        </div>
+    </section>
+
+    <!-- 그래프 -->
+    <section class="admin-chart-grid fade-up">
+        <div class="admin-chart-card">
+            <div class="admin-chart-header">
+                <h2>부서별 자산 현황</h2>
+                <p>부서에 현재 배정된 자산 건수</p>
+            </div>
+            <div class="admin-chart-canvas-wrap">
+                <canvas id="adminDepartmentChart" th:if="${not #lists.isEmpty(departmentLabels)}"></canvas>
+                <p class="admin-chart-empty-text" th:if="${#lists.isEmpty(departmentLabels)}">
+                    아직 부서에 배정된 자산이 없습니다.
+                </p>
+            </div>
+        </div>
+        <div class="admin-chart-card">
+            <div class="admin-chart-header">
+                <h2>상태별 자산 비율</h2>
+                <p>정상 · 수리중 · 폐기 비율</p>
+            </div>
+            <div class="admin-chart-canvas-wrap">
+                <canvas id="adminStatusChart" th:if="${totalCount > 0}"></canvas>
+                <p class="admin-chart-empty-text" th:if="${totalCount == 0}">
+                    등록된 자산이 없습니다.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 전체 직원 목록 -->
+    <section class="admin-table-section fade-up">
+        <div class="admin-section-header">
+            <h2>전체 직원 목록</h2>
+            <span class="admin-section-count" th:text="'총 ' + ${staffPageResult.totalElements} + '명'"></span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" th:if="${not staffPageResult.empty}">
+                <thead>
+                <tr>
+                    <th>사번</th>
+                    <th>아이디</th>
+                    <th>이름</th>
+                    <th>부서</th>
+                    <th>권한</th>
+                    <th>가입일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${staffPageResult.content}">
+                    <td th:text="${s.staffId}"></td>
+                    <td th:text="${s.username}"></td>
+                    <td th:text="${s.name}"></td>
+                    <td th:text="${s.department} ?: '소속 미지정'"></td>
+                    <td>
+                        <span class="admin-role-chip"
+                              th:classappend="${s.isAdmin()} ? 'role-admin' : 'role-user'"
+                              th:text="${s.isAdmin()} ? '관리자' : '일반직원'"></span>
+                    </td>
+                    <td th:text="${#temporals.format(s.createdAt, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <p class="admin-table-empty" th:if="${staffPageResult.empty}">등록된 직원이 없습니다.</p>
+        </div>
+
+        <!-- 직원 목록 페이지네이션 (서버 사이드, 페이지 이동 시 새로고침) -->
+        <div class="admin-pagination" th:if="${staffPageResult.totalPages > 1}">
+            <a th:each="i : ${#numbers.sequence(0, staffPageResult.totalPages - 1)}"
+               th:href="@{/admin(staffPage=${i}, assetPage=${assetPageResult.number})}"
+               th:text="${i + 1}"
+               th:classappend="${i == staffPageResult.number} ? 'active' : ''"
+               class="admin-page-link"></a>
+        </div>
+    </section>
+
+    <!-- 전체 자산 목록 -->
+    <section class="admin-table-section fade-up">
+        <div class="admin-section-header">
+            <h2>전체 자산 목록</h2>
+            <span class="admin-section-count" th:text="'총 ' + ${assetPageResult.totalElements} + '건'"></span>
+        </div>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" th:if="${not assetPageResult.empty}">
+                <thead>
+                <tr>
+                    <th>자산관리번호</th>
+                    <th>자산명</th>
+                    <th>유형</th>
+                    <th>상태</th>
+                    <th>담당자</th>
+                    <th>부서</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${assetPageResult.content}">
+                    <td th:text="${a.assetCode}"></td>
+                    <td th:text="${a.assetName}"></td>
+                    <td th:text="${a.assetType}"></td>
+                    <td>
+                        <span class="admin-status-chip"
+                              th:classappend="${a.status == '정상'} ? 'chip-normal' : (${a.status == '수리중'} ? 'chip-repair' : 'chip-disposed')"
+                              th:text="${a.status}"></span>
+                    </td>
+                    <td th:text="${a.currentStaff != null} ? ${a.currentStaff.name} : '미배정'"></td>
+                    <td th:text="${a.currentStaff != null} ? ${a.currentStaff.department} : '-'"></td>
+                    <td th:text="${#temporals.format(a.createdAt, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+            </table>
+            <p class="admin-table-empty" th:if="${assetPageResult.empty}">등록된 자산이 없습니다.</p>
+        </div>
+
+        <!-- 자산 목록 페이지네이션 -->
+        <div class="admin-pagination" th:if="${assetPageResult.totalPages > 1}">
+            <a th:each="i : ${#numbers.sequence(0, assetPageResult.totalPages - 1)}"
+               th:href="@{/admin(staffPage=${staffPageResult.number}, assetPage=${i})}"
+               th:text="${i + 1}"
+               th:classappend="${i == assetPageResult.number} ? 'active' : ''"
+               class="admin-page-link"></a>
+        </div>
+    </section>
+
+</main>
+
+<!-- 푸터: 기존 site-footer 구조/스타일 그대로 재사용 (common.css) -->
+<footer class="site-footer">
+    <div class="footer-title">IT 자산관리 시스템 · Portfolio Project</div>
+    <div class="footer-contact">
+        <span>👤 김민찬</span>
+        <span>✉️ kmc34633@naver.com</span>
+        <span>📞 010-3463-5279</span>
+    </div>
+    <div class="footer-copy">&copy; 2026 Minchan Kim. All rights reserved.</div>
+</footer>
+
+<!-- 로그아웃 확인 모달 (기존 dashboard/assets 화면과 완전히 동일한 구조, 스타일/로직 재사용) -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal-box logout-modal-box">
+        <div class="logout-modal-icon">🚪</div>
+        <h2>로그아웃 하시겠습니까?</h2>
+        <p>다시 사용하시려면 로그인이 필요합니다.</p>
+        <div class="logout-modal-actions">
+            <button type="button" class="btn btn-outline" id="logoutCancelBtn">취소</button>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">로그아웃</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 그래프 데이터: 서버에서 전달받은 값을 JS 전역 변수로 주입 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const departmentLabels = /*[[${departmentLabels}]]*/ [];
+    const departmentCounts = /*[[${departmentCounts}]]*/ [];
+    const statusLabels = /*[[${statusLabels}]]*/ [];
+    const statusCounts = /*[[${statusCounts}]]*/ [];
+    /*]]>*/
+</script>
+
+<!-- Chart.js: 프로젝트에 내장된 로컬 파일 재사용 -->
+<script th:src="@{/js/vendor/chart.umd.min.js}"></script>
+<script th:src="@{/js/admin/admin.js}"></script>
+</body>
+</html>

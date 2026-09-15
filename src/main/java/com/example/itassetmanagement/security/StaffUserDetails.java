@@ -22,8 +22,13 @@ public class StaffUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 현재는 단일 권한만 사용 (추후 Stage 4에서 역할별 권한 분리 예정)
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        // staff.role 값(USER/ADMIN)을 그대로 Spring Security 권한으로 매핑
+        // -> role이 "ADMIN"이면 ROLE_ADMIN, 그 외(또는 null)에는 ROLE_USER
+        // 관리자 페이지(/admin)는 SecurityConfig에서 ROLE_ADMIN만 접근하도록 제한함
+        String role = (staff.getRole() != null && !staff.getRole().isBlank())
+                ? staff.getRole()
+                : "USER";
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
